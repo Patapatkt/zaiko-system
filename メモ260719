@@ -1,0 +1,112 @@
+なぜ keyword が分かりやすいの？
+
+ここが一番大事です😊
+
+例えば
+
+<input name="name" />
+Server Actionで
+→const name = formData.get("name");
+
+でも、この name は
+
+**「新しい商品名」**なのか、**「検索したい商品名」**なのか、
+ぱっと見で分かりません。
+
+一方で
+<input name="keyword" />
+
+ならconst keyword = formData.get("keyword");を見た瞬間に「あ、この人は検索文字を受け取っているんだな」と分かります。
+
+用語:eq = equal(等しい＝と一緒)
+eq = equal
+
+完全一致
+
+例
+
+バナナ = バナナ
+〇
+
+バナナ = 冷凍バナナ
+×
+
+──────────────
+
+like　SQLでは*りんご*の代わりに%りんご%を使う
+
+部分一致
+
+例
+
+バナナ → 冷凍バナナ
+〇
+
+りんご → 青りんご
+〇
+
+・paramsとserchPrams違い
+params
+↓
+
+URLの道（パス）を受け取る
+
+例
+/inventory/edit/1
+
+────────────
+
+searchParams
+↓
+
+?以降の検索条件を受け取る
+
+例
+/inventory?keyword=りんご
+
+searchParams
+↓
+検索条件が入った箱
+例{keyword: "バナナ"}
+────────────
+keyword
+↓
+箱の中身
+"バナナ"
+────────────
+defaultValueには箱(変数)ではなく中身(値)を入れる
+
+products→商品テーブル
+────────────
+productList→DBから取得した商品の配列
+────────────
+products.name→商品テーブルの「商品名」列
+
+＿＿＿＿＿＿＿＿
+VBA
+If A Or B Then
+
+────────────
+
+JavaScript
+
+A || B
+
+────────────
+
+SQL
+
+WHERE A
+OR B
+
+────────────
+
+Drizzle
+
+or(A, B)
+
+────────────
+
+考え方は全部同じ
+
+違うのは書き方だけ

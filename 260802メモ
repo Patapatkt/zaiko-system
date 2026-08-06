@@ -1,0 +1,11 @@
+React・Next.js・その他の区別
+
+相棒が混同していると言っていた部分も、今回のコードで整理できます。
+
+コード・機能	所属
+JSX、map()を使った表示	React・JavaScript
+page.tsx、Link、searchParams、動的ルート [id]	Next.js
+async / await、分割代入	JavaScript
+TypeScriptの型指定	TypeScript
+db.select()、like()、products	Drizzle ORM
+Tailwindのクラス名	Tailwind CSS

@@ -1,0 +1,18 @@
+// if (
+//     !Number.isNaN(quantity) && // 入力値が数字か確認
+//     stock + quantity >= 0      // 更新後の在庫が0以上
+// ) {
+//     // 条件を満たせば更新OK！！
+// }
+
+// updateStock(id, formData)
+//         ▲
+//         │
+// bindでidを固定
+//         │
+//         ▼
+// action(formData)
+
+// そしてフォームでは
+
+// <form action={action}>と書ける
