@@ -29,7 +29,7 @@ export default async function HistoryPage({
             : await db
                 .select({//stockHistories,productsより必要情報を取得
                     id: stockHistories.id,
-                    productCode:products.code,
+                    productCode: products.code,
                     productName: products.name,
                     quantity: stockHistories.quantity,
                     type: stockHistories.type,
@@ -82,7 +82,7 @@ export default async function HistoryPage({
                     href="/dashboard"
                     className="button button-secondary"
                 >
-                    メニュー画面へ戻る
+                    メニュー
                 </Link>
             </div>
 
@@ -108,68 +108,70 @@ export default async function HistoryPage({
                 </button>
             </form>
 
-            <table className="common-table">
-                <thead>
-                    <tr>
-                        <th>日時</th>
-                        <th>商品コード</th>
-                        <th>商品名</th>
-                        <th>種別</th>
-                        <th>数量</th>
-                        <th>理由</th>
-                    </tr>
-                </thead>
-
-
-                <tbody>
-
-                    {trimmedKeyword === "" ? (
+            <div className="table-wrapper">
+                <table className="common-table">
+                    <thead>
                         <tr>
-                            <td
-                                colSpan={6}
-                                className="text-center p-4"
-                            >
-                                商品名・商品コード・数量を入力して
-                                検索してください
-                            </td>
+                            <th>日時</th>
+                            <th>商品コード</th>
+                            <th>商品名</th>
+                            <th>種別</th>
+                            <th>数量</th>
+                            <th>理由</th>
                         </tr>
-                    ) : histories.length === 0 ? (//履歴がなかったら(0)
-                        <tr>
-                            <td colSpan={6} className="text-center p-4">
-                                該当する入出庫履歴がありません
-                            </td>
-                        </tr>
-                    ) : (
-                        histories.map((history) => (
-                            <tr key={history.id}>
-                                <td>
-                                    {history.createdAt}
-                                </td>
-                                <td>
-                                    {history.productCode}
-                                </td>
-                                <td>
-                                    {history.productName}
-                                </td>
-                                <td>
-                                    {history.type === "IN"
-                                        ? "入庫"
-                                        : history.type === "OUT"
-                                            ? "出庫"
-                                            : "棚卸"
-                                    }
-                                </td>
-                                <td>
-                                    {history.quantity}
-                                </td>
-                                <td>
-                                    {history.memo ?? "なし"}
+                    </thead>
+
+
+                    <tbody>
+
+                        {trimmedKeyword === "" ? (
+                            <tr>
+                                <td
+                                    colSpan={6}
+                                    className="text-center p-4"
+                                >
+                                    商品名・商品コード・数量を入力して
+                                    検索してください
                                 </td>
                             </tr>
-                        ))
-                    )}
-                </tbody>
-            </table>
+                        ) : histories.length === 0 ? (//履歴がなかったら(0)
+                            <tr>
+                                <td colSpan={6} className="text-center p-4">
+                                    該当する入出庫履歴がありません
+                                </td>
+                            </tr>
+                        ) : (
+                            histories.map((history) => (
+                                <tr key={history.id}>
+                                    <td>
+                                        {history.createdAt}
+                                    </td>
+                                    <td>
+                                        {history.productCode}
+                                    </td>
+                                    <td>
+                                        {history.productName}
+                                    </td>
+                                    <td>
+                                        {history.type === "IN"
+                                            ? "入庫"
+                                            : history.type === "OUT"
+                                                ? "出庫"
+                                                : "棚卸"
+                                        }
+                                    </td>
+                                    <td>
+                                        {history.quantity}
+                                    </td>
+                                    <td>
+                                        {history.memo ?? "なし"}
+                                    </td>
+                                </tr>
+                            ))
+                        )}
+                    </tbody>
+                </table>
+            </div>
         </main>
     )
 }

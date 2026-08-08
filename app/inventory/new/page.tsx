@@ -5,7 +5,7 @@ export default function NewProductPage (){
     return(
         <main className="page-container">
             <h1 className="page-title">
-                商品登録
+                商品入庫
             </h1>
 
             <form action={createProduct}className="space-y-4">
@@ -48,7 +48,7 @@ export default function NewProductPage (){
                 type="submit"
                 className="button button-success search-button"
                 >
-                    登録
+                    入庫
                 </button>
             </form>
 

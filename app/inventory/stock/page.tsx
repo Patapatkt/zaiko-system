@@ -54,64 +54,64 @@ export default async function StockPage({
             </form >
 
             {/* 検索結果が見つからなかった時の表示 */}
-
-            <table className="common-table">
-                <thead>
-                    <tr>
-                        <th>商品コード</th>
-                        <th>商品名</th>
-                        <th>現在庫</th>
-                        <th>操作</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    {trimmedKeyword === "" ? (
+            <div className="table-wrapper">
+                <table className="common-table">
+                    <thead>
                         <tr>
-                            <td
-                                colSpan={4}
-                                className="text-center p-4"
-                            >
-                                商品名を入力して検索してください
-                            </td>
+                            <th>商品コード</th>
+                            <th>商品名</th>
+                            <th>現在庫</th>
+                            <th>操作</th>
                         </tr>
-                    ) :
-                        productList.length === 0 ? (
+                    </thead>
+
+                    <tbody>
+                        {trimmedKeyword === "" ? (
                             <tr>
-                                <td colSpan={4} className="text-center px-4">
-                                    該当する商品はありません
+                                <td
+                                    colSpan={4}
+                                    className="text-center p-4"
+                                >
+                                    商品名を入力して検索してください
                                 </td>
                             </tr>
                         ) :
-                            (
+                            productList.length === 0 ? (
+                                <tr>
+                                    <td colSpan={4} className="text-center px-4">
+                                        該当する商品はありません
+                                    </td>
+                                </tr>
+                            ) :
+                                (
 
-                                productList.map((product) => (
-                                    <tr key={product.id}>
-                                        <td>
-                                            {product.code}
-                                        </td>
-                                        <td>
-                                            {product.name}
-                                        </td>
-                                        <td>
-                                            {product.stock}
-                                        </td>
-                                        <td>
-                                            <div className="action-area">
-                                                <Link
-                                                    href={`/inventory/stock/${product.id}`}
-                                                    className="button button-primary"
-                                                >
-                                                    在庫修正
-                                                </Link>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
-                </tbody>
-            </table>
-
+                                    productList.map((product) => (
+                                        <tr key={product.id}>
+                                            <td>
+                                                {product.code}
+                                            </td>
+                                            <td>
+                                                {product.name}
+                                            </td>
+                                            <td>
+                                                {product.stock}
+                                            </td>
+                                            <td>
+                                                <div className="action-area">
+                                                    <Link
+                                                        href={`/inventory/stock/${product.id}`}
+                                                        className="button button-primary"
+                                                    >
+                                                        在庫修正
+                                                    </Link>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                    </tbody>
+                </table>
+            </div>
             <Link
                 href="/dashboard"
                 className="button button-secondary"

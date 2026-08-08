@@ -29,47 +29,56 @@ export default async function EditPage({
                 <h1 className="page-title">
                     商品編集
                 </h1>
-                <div className="header-actions">
-                    <button type="submit"
-                        className="bg-blue-500 text-white px-4 py-2 rounded">
-                        更新
-                    </button>
-                    <Link
-                        href="/dashboard"
-                        className="button button-primary"
-                    >
-                        メニュー画面へ戻る
-                    </Link>
+
+                <div>
                     <form
                         action={async (formData) => {
                             "use server";
                             await updateProduct(product.id, formData);
                         }}
                     >
-                        <div>
+                        <div className="form-group">
                             <label>商品コード</label>
                             <input
                                 name="code"
                                 defaultValue={product.code}
+                                className="form-input"
                             />
+                        </div>
+
+                        <div className="form-group">
                             <label>商品名</label>
                             <input
                                 name="name"
                                 defaultValue={product.name}
+                                className="form-input"
                             />
+                        </div>
+
+                        <div className="form-group">
                             <label>価格</label>
                             <input
                                 type="number"
                                 name="price"
                                 defaultValue={product.price}
+                                className="form-input"
                             />
+                        </div>
+                        <div className="header-actions">
                             <button type="submit"
-                                className="button button-primary">
+                                className="button button-success">
                                 更新
                             </button>
+                            <Link
+                                href="/dashboard"
+                                className="button button-secondary"
+                            >
+                                メニュー
+                            </Link>
                         </div>
                     </form>
                 </div>
+
             </div>
         </main>
     )

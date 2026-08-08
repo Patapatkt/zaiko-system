@@ -82,19 +82,7 @@ export default async function InventoryPage(
         <main className="page-container">
             <div className="page-header">
                 <h1 className="page-title">商品一覧</h1>
-                {/* +商品登録追加 */}
-                <div className="header-actions">
-                    <Link href="/inventory/new"
-                        className="button button-primary"
-                    >
-                        +商品登録
-                    </Link>
-                    <Link href="/history"
-                        className="button button-primary"
-                    >
-                        履歴画面
-                    </Link>
-                </div>
+
 
             </div>
 
@@ -116,72 +104,89 @@ export default async function InventoryPage(
                 </button>
             </form>
 
-            <table className="common-table">
-                <thead>
-                    <tr>
-                        <th>商品コード</th>
-                        <th>商品名</th>
-                        <th>価格</th>
-                        <th>在庫</th>
-                        <th>操作</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    {trimmedKeyword === "" ? (
+            <div className="table-wrapper">
+                <table className="common-table">
+                    <thead>
                         <tr>
-                            <td
-                                colSpan={5}
-                                className="text-center p-4"
-                            >
-                                商品コード・商品名・価格を入力して検索してください
-                            </td>
+                            <th>商品コード</th>
+                            <th>商品名</th>
+                            <th>価格</th>
+                            <th>在庫</th>
+                            <th>操作</th>
                         </tr>
-                    ) :
-                        productList.length === 0 ? (
+                    </thead>
+
+                    <tbody>
+                        {trimmedKeyword === "" ? (
                             <tr>
-                                <td colSpan={5} className="text-center p-4">
-                                    該当する商品はありません
+                                <td
+                             
+                             colSpan={5}
+                                    className="text-center p-4"
+                                >
+                                    商品コード・商品名・価格を入力して検索してください
                                 </td>
                             </tr>
                         ) :
-                            (
-                                productList.map((product) => (
-                                    <tr key={product.id}>
-                                        <td>{product.code}</td>
-                                        <td>{product.name}</td>
-                                        <td>{product.price.toLocaleString()}円</td>
-                                        <td>{product.stock}</td>
-                                        <td>
-                                            <div className="action-area">
-                                                <Link
-                                                    href={`/inventory/edit/${product.id}`}
-                                                    className="edit-link"
-                                                >
-                                                    編集
-                                                </Link>
-                                                {isAdmin && (
-                                                    <form action={async () => {
-                                                        "use server";
-                                                        await deleteProduct(product.id);
-                                                    }}
-                                                        className="inline ml-3"
+                            productList.length === 0 ? (
+                                <tr>
+                                    <td colSpan={5} className="text-center p-4">
+                                        該当する商品はありません
+                                    </td>
+                                </tr>
+                            ) :
+                                (
+                                    productList.map((product) => (
+                                        <tr key={product.id}>
+                                            <td>{product.code}</td>
+                                            <td>{product.name}</td>
+                                            <td>{product.price.toLocaleString()}円</td>
+                                            <td>{product.stock}</td>
+                                            <td>
+                                                <div className="action-area">
+                                                    <Link
+                                                        href={`/inventory/edit/${product.id}`}
+                                                        className="edit-link"
                                                     >
-                                                        <button
-                                                            type="submit"
-                                                            className="danger-link"
+                                                        編集
+                                                    </Link>
+                                                    {isAdmin && (
+                                                        <form action={async () => {
+                                                            "use server";
+                                                            await deleteProduct(product.id);
+                                                        }}
+                                                            className="inline ml-3"
                                                         >
-                                                            削除
-                                                        </button>
-                                                    </form>
-                                                )}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
-                </tbody>
-            </table>
+                                                            <button
+                                                                type="submit"
+                                                                className="danger-link"
+                                                            >
+                                                                削除
+                                                            </button>
+                                                        </form>
+                                                    )}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                    </tbody>
+                </table>
+            </div>
+
+            {/* +商品登録追加 */}
+            <div className="header-actions">
+                <Link href="/inventory/new"
+                    className="button button-primary"
+                >
+                    +商品入庫
+                </Link>
+                <Link href="/history"
+                    className="button button-primary"
+                >
+                    履歴画面
+                </Link>
+            </div>
 
             <Link href="/dashboard"
                 className="button button-secondary">

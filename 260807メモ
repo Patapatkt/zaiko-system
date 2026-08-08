@@ -1,0 +1,12 @@
+ただし、開店後の改善事項
+現在
+zaiko-system-chi.vercel.app/dashboard → 正常
+zaiko-system-chi.vercel.app/ → 404
+
+なので、次回は / にアクセスしたら自動で /login または /dashboard へ案内するようにする
+
+解決済み
+app/page.tsxを追加
+
+sessionあり → /dashboard
+sessionなし → /login
