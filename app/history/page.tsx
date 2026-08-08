@@ -77,13 +77,6 @@ export default async function HistoryPage({
                 <h1 className="page-title">
                     入出庫履歴
                 </h1>
-
-                <Link
-                    href="/dashboard"
-                    className="button button-secondary"
-                >
-                    メニュー
-                </Link>
             </div>
 
             {/* 履歴検索フォーム */}
@@ -171,6 +164,12 @@ export default async function HistoryPage({
                         )}
                     </tbody>
                 </table>
+                <Link
+                    href="/dashboard"
+                    className="button button-secondary"
+                >
+                    メニュー
+                </Link>
             </div>
         </main>
     )
