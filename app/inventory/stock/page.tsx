@@ -59,6 +59,7 @@ export default async function StockPage({
                     <thead>
                         <tr>
                             <th>商品コード</th>
+                            <th>棚番</th>{/*⇐棚番を追加 */}
                             <th>商品名</th>
                             <th>現在庫</th>
                             <th>操作</th>
@@ -69,7 +70,7 @@ export default async function StockPage({
                         {trimmedKeyword === "" ? (
                             <tr>
                                 <td
-                                    colSpan={4}
+                                    colSpan={5}
                                     className="text-center p-4"
                                 >
                                     商品名を入力して検索してください
@@ -78,7 +79,7 @@ export default async function StockPage({
                         ) :
                             productList.length === 0 ? (
                                 <tr>
-                                    <td colSpan={4} className="text-center px-4">
+                                    <td colSpan={5} className="text-center px-4">
                                         該当する商品はありません
                                     </td>
                                 </tr>
@@ -89,6 +90,9 @@ export default async function StockPage({
                                         <tr key={product.id}>
                                             <td>
                                                 {product.code}
+                                            </td>
+                                            <td>
+                                                {product.shelf}
                                             </td>
                                             <td>
                                                 {product.name}

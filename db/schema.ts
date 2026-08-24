@@ -1,3 +1,4 @@
+// dbのテールブ設定
 import {
   sqliteTable,
   integer,
@@ -36,6 +37,7 @@ export const users = sqliteTable("users", {
 export const products = sqliteTable("products", {
   id: integer("id")
     .primaryKey({ autoIncrement: true }),
+  shelf: text("shelf"),//⇐棚番追加26/8/23
   code: text("code")
     .notNull()
     .unique(),
@@ -46,13 +48,13 @@ export const products = sqliteTable("products", {
   stock: integer("stock")
     .notNull()
     .default(0),
-  // true:取扱中、false:取扱終了
-  isActive: integer("is_active", {
+  // true:取扱中、false:取扱終了⇒一旦、非作動26/8/23
+  /*isActive: integer("is_active", {
     mode: "boolean",
   })
     .notNull()
     .default(true),
-
+  */
   deletedAt: text("deleted_at"),
 
   createdAt: text("created_at")

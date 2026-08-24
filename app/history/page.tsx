@@ -30,6 +30,7 @@ export default async function HistoryPage({
                 .select({//stockHistories,productsより必要情報を取得
                     id: stockHistories.id,
                     productCode: products.code,
+                    productShelf: products.shelf,
                     productName: products.name,
                     quantity: stockHistories.quantity,
                     type: stockHistories.type,
@@ -50,6 +51,10 @@ export default async function HistoryPage({
                                 `%${trimmedKeyword}%`
                             ),
                             like(
+                                products.shelf,
+                                `%${trimmedKeyword}%`
+                            ),
+                            like(
                                 products.name,
                                 `%${trimmedKeyword}%`
                             ),
@@ -61,6 +66,10 @@ export default async function HistoryPage({
                         : or(
                             like(
                                 products.code,
+                                `%${trimmedKeyword}%`
+                            ),
+                            like(
+                                products.shelf,
                                 `%${trimmedKeyword}%`
                             ),
                             like(
@@ -88,7 +97,7 @@ export default async function HistoryPage({
                 <input
                     type="text"
                     name="keyword"
-                    placeholder="商品名・商品コード・数量を入力してください"
+                    placeholder="商品名・商品コード・棚番・数量を入力してください"
                     defaultValue={keyword}
                     className="search-input"
                 />
@@ -107,6 +116,7 @@ export default async function HistoryPage({
                         <tr>
                             <th>日時</th>
                             <th>商品コード</th>
+                            <th>棚番</th>
                             <th>商品名</th>
                             <th>種別</th>
                             <th>数量</th>
@@ -120,16 +130,16 @@ export default async function HistoryPage({
                         {trimmedKeyword === "" ? (
                             <tr>
                                 <td
-                                    colSpan={6}
+                                    colSpan={7}
                                     className="text-center p-4"
                                 >
-                                    商品名・商品コード・数量を入力して
+                                    商品名・商品コード・棚番・数量を入力して
                                     検索してください
                                 </td>
                             </tr>
                         ) : histories.length === 0 ? (//履歴がなかったら(0)
                             <tr>
-                                <td colSpan={6} className="text-center p-4">
+                                <td colSpan={7} className="text-center p-4">
                                     該当する入出庫履歴がありません
                                 </td>
                             </tr>
@@ -142,6 +152,8 @@ export default async function HistoryPage({
                                     <td>
                                         {history.productCode}
                                     </td>
+                                    {/* 棚番を追加 */}
+                                    <td>{history.productShelf}</td>
                                     <td>
                                         {history.productName}
                                     </td>
@@ -150,7 +162,9 @@ export default async function HistoryPage({
                                             ? "入庫"
                                             : history.type === "OUT"
                                                 ? "出庫"
-                                                : "棚卸"
+                                                :history.type === "CHECK"
+                                                ? "確認"
+                                                :"要確認"
                                         }
                                     </td>
                                     <td>

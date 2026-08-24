@@ -1,0 +1,10 @@
+/*!user    // 前につく → 否定
+//user!    // 後ろにつく → 保証:undefined/nullじゃないとTypeScriptに伝える
+
+
+migrate
+→ 未適用のmigration（DB変更内容）を
+   実際のDBへ反映する
+
+generate = 工事指示書を作る
+migrate  = 工事を実行する*/

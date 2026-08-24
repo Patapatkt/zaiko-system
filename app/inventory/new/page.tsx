@@ -1,14 +1,21 @@
+"use client"
 import { createProduct } from "@/actions/inventory";
 import Link from "next/link";
+import { useActionState, useState } from "react";
 
 export default function NewProductPage (){
+    const [state, formAction,isPending] = useActionState(
+        createProduct,    
+        null
+    );
+
     return(
         <main className="page-container">
             <h1 className="page-title">
                 商品入庫
             </h1>
 
-            <form action={createProduct}className="space-y-4">
+            <form action={formAction}className="space-y-4">
                 <div>
                     <label>商品コード</label>
                     <input 
@@ -17,6 +24,20 @@ export default function NewProductPage (){
                     required
                     />
                 </div>
+                <div>
+                    <label>棚番</label>
+                    <input 
+                    name="shelf"
+                    className ="border p-2 w-full"
+                    required
+                    />
+                </div>
+                {/* 棚番の桁数が違う場合はエラー表示 */}
+                {state?.error && (
+                    <div className="text-red-500">
+                        {state.error}
+                    </div>
+                )}
                 <div>
                     <label>商品名</label>
                     <input 
@@ -48,7 +69,7 @@ export default function NewProductPage (){
                 type="submit"
                 className="button button-success search-button"
                 >
-                    入庫
+                    {isPending ? "入庫中..." : "入庫"}
                 </button>
             </form>
 

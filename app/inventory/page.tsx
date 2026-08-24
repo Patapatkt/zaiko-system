@@ -1,8 +1,9 @@
+// 商品一覧の在庫照会
 import { db } from "@/db";
 import { products, users } from "@/db/schema";
 import { deleteProduct } from "@/actions/inventory";
 import Link from "next/link";
-import { and, eq, like, or } from "drizzle-orm";
+import { eq, like, or } from "drizzle-orm";//⇐andを削除
 import { getSession } from "@/actions/auth"
 import { redirect } from 'next/navigation';
 
@@ -48,9 +49,10 @@ export default async function InventoryPage(
                 .select()
                 .from(products)
                 .where(
-                    and(
-                        // 取り扱い中の商品だけを対象にする
-                        eq(products.isActive, true),
+                    // and(// 将来、論理削除を採用する場合は
+                    // productsにisActiveを追加し、ここで取り扱い中の商品だけに絞り込む
+                    //     // 取り扱い中の商品だけを対象にする
+                    //     eq(products.isActive, true),//⇐ここが修正が必要
                         isPriceSearch
                             ? or(
                                 like(
@@ -74,8 +76,7 @@ export default async function InventoryPage(
                                     `%${trimmedKeyword}%`
                                 )
                             )
-                    )
-                );
+                    );
 
 
     return (
@@ -109,6 +110,7 @@ export default async function InventoryPage(
                     <thead>
                         <tr>
                             <th>商品コード</th>
+                            <th>棚番</th>{/*⇐棚番を追加26/8/23 */}
                             <th>商品名</th>
                             <th>価格</th>
                             <th>在庫</th>
@@ -121,7 +123,7 @@ export default async function InventoryPage(
                             <tr>
                                 <td
                              
-                             colSpan={5}
+                             colSpan={6}
                                     className="text-center p-4"
                                 >
                                     商品コード・商品名・価格を入力して検索してください
@@ -130,7 +132,7 @@ export default async function InventoryPage(
                         ) :
                             productList.length === 0 ? (
                                 <tr>
-                                    <td colSpan={5} className="text-center p-4">
+                                    <td colSpan={6} className="text-center p-4">
                                         該当する商品はありません
                                     </td>
                                 </tr>
@@ -139,6 +141,7 @@ export default async function InventoryPage(
                                     productList.map((product) => (
                                         <tr key={product.id}>
                                             <td>{product.code}</td>
+                                            <td>{product.shelf}</td>
                                             <td>{product.name}</td>
                                             <td>{product.price.toLocaleString()}円</td>
                                             <td>{product.stock}</td>

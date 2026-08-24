@@ -6,14 +6,31 @@ import { eq } from "drizzle-orm"
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/utils/auth";
 
-export async function createProduct(formData: FormData) {
+type ProductState = {
+    error: string;
+}|null;
+
+export async function createProduct(
+    previousState: ProductState,
+    formData: FormData
+): Promise<ProductState> {
     const code = formData.get("code") as string;
+    const shelf = (formData.get("shelf") as string)?.trim();
     const name = formData.get("name") as string;
     const price = Number(formData.get("price"));
     const stock = Number(formData.get("stock"));
 
+    // 棚番が空白だった場合のガード節追加
+    if (!shelf || shelf.length !== 6) {//棚番の桁数が違う場合のエラー処理
+        return{
+            error: 
+            "棚番が未入力か桁数が違います。棚番を正しく設定してください。"
+        };
+    }
+
     await db.insert(products).values({
         code,
+        shelf,
         name,
         price,
         stock,
@@ -23,16 +40,26 @@ export async function createProduct(formData: FormData) {
 
 export async function updateProduct(
     id: number,
+    previousState: ProductState,
     formData: FormData
 ) {
     const code = formData.get("code") as string;
+    const shelf = formData.get("shelf") as string;
     const name = formData.get("name") as string;
     const price = Number(formData.get("price")) as number;
+
+    if (!shelf || shelf.length !== 6) {
+        return {
+            error:
+                "棚番が未入力か桁数が違います。棚番を6桁で入力してください。",
+        };
+    }
 
     await db
         .update(products)
         .set({
             code,
+            shelf,
             name,
             price,
         })
@@ -47,7 +74,7 @@ export async function deleteProduct(id: number) {
     await db
         .update(products)
         .set({
-            isActive: false,
+            // isActive: false,⇐将来、論理削除を採用する場合はこの行を有効にする26/8/23
             deletedAt: new Date().toISOString(),
         })
         .where(eq(products.id, id));//eqは=の意味
@@ -72,7 +99,6 @@ export async function updateStock(
 
     const type = quantity > 0 ? "IN" : "OUT";
     const newStock = product.stock + quantity;
-
 
     if (
         Number.isNaN(quantity)
