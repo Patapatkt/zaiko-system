@@ -53,30 +53,30 @@ export default async function InventoryPage(
                     // productsにisActiveを追加し、ここで取り扱い中の商品だけに絞り込む
                     //     // 取り扱い中の商品だけを対象にする
                     //     eq(products.isActive, true),//⇐ここが修正が必要
-                        isPriceSearch
-                            ? or(
-                                like(
-                                    products.code,
-                                    `%${trimmedKeyword}%`
-                                ),
-                                (
-                                    like(
-                                        products.name,
-                                        `%${trimmedKeyword}%`)
-                                ),
-                                eq(products.price, keywordPrice)
-                            )
-                            : or(
-                                like(
-                                    products.code,
-                                    `%${trimmedKeyword}%`
-                                ),
+                    isPriceSearch
+                        ? or(
+                            like(
+                                products.code,
+                                `%${trimmedKeyword}%`
+                            ),
+                            (
                                 like(
                                     products.name,
-                                    `%${trimmedKeyword}%`
-                                )
+                                    `%${trimmedKeyword}%`)
+                            ),
+                            eq(products.price, keywordPrice)
+                        )
+                        : or(
+                            like(
+                                products.code,
+                                `%${trimmedKeyword}%`
+                            ),
+                            like(
+                                products.name,
+                                `%${trimmedKeyword}%`
                             )
-                    );
+                        )
+                );
 
 
     return (
@@ -93,7 +93,7 @@ export default async function InventoryPage(
                 <input
                     type="text"
                     name="keyword"
-                    placeholder="商品コード・商品名・価格で検索"
+                    placeholder="商品コード・棚番・商品名・仕様・価格で検索"
                     defaultValue={keyword}
                     className="search-input"
                 />
@@ -113,6 +113,7 @@ export default async function InventoryPage(
                             <th>棚番</th>{/*⇐棚番を追加26/8/23 */}
                             <th>商品名</th>
                             <th>価格</th>
+                            <th>仕様</th>
                             <th>在庫</th>
                             <th>操作</th>
                         </tr>
@@ -122,8 +123,8 @@ export default async function InventoryPage(
                         {trimmedKeyword === "" ? (
                             <tr>
                                 <td
-                             
-                             colSpan={6}
+
+                                    colSpan={7}
                                     className="text-center p-4"
                                 >
                                     商品コード・商品名・価格を入力して検索してください
@@ -132,7 +133,7 @@ export default async function InventoryPage(
                         ) :
                             productList.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="text-center p-4">
+                                    <td colSpan={7} className="text-center p-4">
                                         該当する商品はありません
                                     </td>
                                 </tr>
@@ -141,9 +142,10 @@ export default async function InventoryPage(
                                     productList.map((product) => (
                                         <tr key={product.id}>
                                             <td>{product.code}</td>
-                                            <td>{product.shelf}</td>
+                                            <td>{product.shelf ?? "未設定"}</td>
                                             <td>{product.name}</td>
                                             <td>{product.price.toLocaleString()}円</td>
+                                            <td>{product.specification ?? "未設定"}</td>
                                             <td>{product.stock}</td>
                                             <td>
                                                 <div className="action-area">

@@ -3,13 +3,15 @@
 import { updateProduct } from "@/actions/inventory";
 import Link from "next/link";
 import { useActionState } from "react";
+import ProductFormFields from "@/components/ProductFormFields";
 
 type Product = {
     id: number;
     code: string;
-    shelf: string;
+    shelf: string | null;
     name: string;
     price: number;
+    specification: string | null;
 }
 
 export default function EditProductForm({
@@ -35,39 +37,15 @@ export default function EditProductForm({
                 </p>
             )}
 
-            <div className="form-group">
-                <label>商品コード</label>
-                <input
-                    name="code"
-                    defaultValue={product.code}
-                    className="form-input"
-                    required
-                />
-            </div>
-
-            <div className="form-group">
-                <label>棚番</label>
-                <input
-                    type="text"
-                    name="shelf"
-                    defaultValue={product.shelf}
-                    className="form-input"
-                    minLength={6}
-                    maxLength={6}
-                    required
-                />
-            </div>
-
-            <div className="form-group">
-                <label>商品名</label>
-                <input
-                    name="name"
-                    defaultValue={product.name}
-                    className="form-input"
-                    required
-                />
-            </div>
-
+            <ProductFormFields
+                defaultValues={{
+                    code: product.code,
+                    shelf: product.shelf ?? "",
+                    name: product.name,
+                    specification: product.specification ?? "",
+                }}
+            />
+            
             <div className="form-group">
                 <label>価格</label>
                 <input

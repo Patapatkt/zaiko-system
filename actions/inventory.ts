@@ -8,7 +8,7 @@ import { requireAdmin } from "@/utils/auth";
 
 type ProductState = {
     error: string;
-}|null;
+} | null;
 
 export async function createProduct(
     previousState: ProductState,
@@ -16,15 +16,16 @@ export async function createProduct(
 ): Promise<ProductState> {
     const code = formData.get("code") as string;
     const shelf = (formData.get("shelf") as string)?.trim();
+    const specification = (formData.get("specification") as string)?.trim();
     const name = formData.get("name") as string;
     const price = Number(formData.get("price"));
     const stock = Number(formData.get("stock"));
 
     // 棚番が空白だった場合のガード節追加
     if (!shelf || shelf.length !== 6) {//棚番の桁数が違う場合のエラー処理
-        return{
-            error: 
-            "棚番が未入力か桁数が違います。棚番を正しく設定してください。"
+        return {
+            error:
+                "棚番が未入力か桁数が違います。棚番を正しく設定してください。"
         };
     }
 
@@ -34,6 +35,7 @@ export async function createProduct(
         name,
         price,
         stock,
+        specification,
     });
     redirect("/inventory");
 }
@@ -47,11 +49,24 @@ export async function updateProduct(
     const shelf = formData.get("shelf") as string;
     const name = formData.get("name") as string;
     const price = Number(formData.get("price")) as number;
-
+    const specification =
+        formData.get("specification") as string;
     if (!shelf || shelf.length !== 6) {
         return {
             error:
                 "棚番が未入力か桁数が違います。棚番を6桁で入力してください。",
+        };
+    }
+
+    if(!specification.trim()) {
+        return {
+            error: "仕様が未入力です。仕様を入力してください。",
+        };
+    }
+
+    if(!specification.trim()) {
+        return {
+            error: "仕様が未入力です。仕様を入力してください。",
         };
     }
 
@@ -62,6 +77,7 @@ export async function updateProduct(
             shelf,
             name,
             price,
+            specification,
         })
         .where(eq(products.id, id));
     redirect("/inventory");

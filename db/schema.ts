@@ -45,6 +45,7 @@ export const products = sqliteTable("products", {
     .notNull(),
   price: integer("price")
     .notNull(),
+  specification: text("specification"),
   stock: integer("stock")
     .notNull()
     .default(0),
@@ -65,7 +66,6 @@ export const products = sqliteTable("products", {
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 });
-
 //
 // Stock History 入出庫管理
 //

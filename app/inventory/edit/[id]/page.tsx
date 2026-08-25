@@ -35,6 +35,7 @@ export default async function EditPage({
                             code: product.code,
                             shelf: product.shelf??"",
                             name: product.name,
+                            specification: product.specification,
                             price: product.price,
                         }}
                         />

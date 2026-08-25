@@ -1,0 +1,1 @@
+ALTER TABLE `products` ADD `specification` text;

@@ -29,6 +29,13 @@
       "when": 1787453272865,
       "tag": "0003_complete_old_lace",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1787660229568,
+      "tag": "0004_add-product-specification",
+      "breakpoints": true
     }
   ]
 }
