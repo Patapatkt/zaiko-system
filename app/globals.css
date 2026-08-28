@@ -265,12 +265,21 @@ body {
   margin: 10px;
 }
 
-.product-info{
-    background:#f8f9fa;
-    border:1px solid #ddd;
-    border-radius:8px;
-    padding:16px;
-    margin-bottom:20px;
+.succsess-message {
+  color: #166534;
+  background-color: #dcfce7;
+  border: 1px solid #86efac;
+  padding: 12px;
+  margin-bottom: 16px;
+  border-radius: 6px;
+}
+
+.product-info {
+  background: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
 }
 
 /* ========================================
@@ -278,9 +287,9 @@ body {
 ======================================== */
 
 /* タブレット・スマホでテーブルを横スクロール可能にする */
-.table-wrapper{
+.table-wrapper {
   width: 100%;
-  overflow-x:auto;
+  overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 

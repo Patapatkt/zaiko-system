@@ -7,15 +7,16 @@ import { eq, like, or } from "drizzle-orm";//⇐andを削除
 import { getSession } from "@/actions/auth"
 import { redirect } from 'next/navigation';
 import SearchForm from "@/components/SearchForm";
-
+import { createProduct } from "@/actions/inventory";
 
 export default async function InventoryPage(
-
+    
     {
         searchParams,
     }: {
         searchParams: Promise<{
             keyword?: string;
+            succsess?:string;
         }>;
     }
 ) {//ログイン確認
@@ -35,7 +36,9 @@ export default async function InventoryPage(
     const isAdmin = currentUser.role === "admin";
 
     //検索文字を取得し前後の空白を削除
-    const { keyword = "" } = await searchParams
+    const { keyword = "" ,
+        succsess,
+    } = await searchParams
     const trimmedKeyword = keyword.trim();
 
     //検索文字が空ならDB検索を行わず、空の配列にする
@@ -76,10 +79,12 @@ export default async function InventoryPage(
         <main className="page-container">
             <div className="page-header">
                 <h1 className="page-title">商品一覧</h1>
-
-
             </div>
-
+            {succsess==="created"&&(
+                <p className="succsess-message">
+                    商品登録成功
+                </p>
+            )}
             <SearchForm
                 action="/inventory"
                 keyword={trimmedKeyword}

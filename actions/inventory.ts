@@ -40,16 +40,16 @@ export async function createProduct(
     }
 
     // 初期在庫が数値以外で登録された時のガード節
-    if(Number.isNaN(stock)){
-        return{
-            error:"初期在庫は数値で入力してください"
+    if (Number.isNaN(stock)) {
+        return {
+            error: "初期在庫は数値で入力してください"
         }
     }
 
     // 初期在庫が-(マイナス)で登録された時のガード節
-    if(stock<0){        
-        return{
-            error:"初期在庫にマイナスは入力できません。入力値を確認してください"
+    if (stock < 0) {
+        return {
+            error: "初期在庫にマイナスは入力できません。入力値を確認してください"
         }
     }
 
@@ -83,173 +83,173 @@ export async function createProduct(
         }
     });
 
-    redirect("/inventory");//トランザクションが成功したら/inventoryへ
+    redirect("/inventory?succsess=created");//トランザクションが成功したら/inventoryへ
 }
 
-    export async function updateProduct(
-        id: number,
-        previousState: ProductState,
-        formData: FormData
+export async function updateProduct(
+    id: number,
+    previousState: ProductState,
+    formData: FormData
+) {
+    await requireAdmin();
+    const code = formData.get("code") as string;
+    const shelf =
+        (formData.get("shelf") as string)?.trim();
+    const name = formData.get("name") as string;
+    const specification =
+        (formData.get("specification") as string)?.trim();
+
+    if (!shelf || shelf.length !== 6) {
+        return {
+            error:
+                "棚番が未入力か桁数が違います。棚番を6桁で入力してください。",
+        };
+    }
+
+    if (!specification) {
+        return {
+            error: "仕様が未入力です。仕様を入力してください。",
+        };
+    }
+
+    await db
+        .update(products)
+        .set({
+            code,
+            shelf,
+            name,
+            specification,
+        })
+        .where(eq(products.id, id));
+    redirect("/inventory");
+}
+
+export async function deleteProduct(id: number) {
+
+    await requireAdmin();
+
+    await db
+        .update(products)
+        .set({
+            // isActive: false,⇐将来、論理削除を採用する場合はこの行を有効にする26/8/23
+            deletedAt: new Date().toISOString(),
+        })
+        .where(eq(products.id, id));//eqは=の意味
+    redirect("/inventory");
+}
+
+export async function updateStock(
+    id: number,//引数:idは一意の為、商品名を確実に絞り込める
+    formData: FormData//引数:formDataを型として引数に設定
+) {
+    await requireAdmin();
+    const memo = formData.get("memo") as string;//formDataよりname(商品名)を取得
+    const quantity = Number(formData.get("quantity")) as number;//formDataよりquantity(増減値)を取得
+
+    const product = await db.query.products.findFirst({//DBからproduct(テーブルを取得)
+        where: eq(products.id, id),
+    });
+
+
+    if (!product) {
+        throw Error("商品が見つかりません")
+    }
+
+    const type = quantity > 0 ? "IN" : "OUT";
+    const newStock = product.stock + quantity;
+
+    if (
+        Number.isNaN(quantity)
     ) {
-        await requireAdmin();
-        const code = formData.get("code") as string;
-        const shelf =
-            (formData.get("shelf") as string)?.trim();
-        const name = formData.get("name") as string;
-        const specification =
-            (formData.get("specification") as string)?.trim();
+        throw new Error("入出庫数は数値を入力してください")
+    }
 
-        if (!shelf || shelf.length !== 6) {
-            return {
-                error:
-                    "棚番が未入力か桁数が違います。棚番を6桁で入力してください。",
-            };
-        }
+    if (
+        quantity === 0
+    ) {
+        throw new Error("入出庫数に0は入力できません")
+    }
 
-        if (!specification) {
-            return {
-                error: "仕様が未入力です。仕様を入力してください。",
-            };
-        }
+    if (
+        newStock < 0) {
+        throw new Error("在庫が不足してしまいます")
+    }
 
-        await db
+
+    await db.transaction(async (tx) => {
+        await tx
             .update(products)
             .set({
-                code,
-                shelf,
-                name,
-                specification,
+                stock: newStock,
             })
             .where(eq(products.id, id));
-        redirect("/inventory");
+
+        await tx.insert(stockHistories).values({
+            productId: id,
+            quantity,
+            type,
+            memo,
+        })
+    })
+    redirect("/inventory");//結果をredirectでinventoryに表示
+}
+
+export async function adjustStock(
+    id: number,
+    formatData: FormData
+) {
+    await requireAdmin();
+    const actualStock = Number(formatData.get("actualStock"));
+    const memo = formatData.get("memo") as string;
+
+    const product = await db.query.products.findFirst({
+        where: eq(products.id, id),
+    });
+
+    if (!product) {
+        throw new Error("商品が見つかりません");
     }
 
-    export async function deleteProduct(id: number) {
+    if (Number.isNaN(actualStock)) {
+        throw new Error("実在庫数は数値を入力してください");
+    }
 
-        await requireAdmin();
+    if (actualStock < 0) {
+        throw new Error("実在庫数にマイナスは入力できません");
+    }
 
-        await db
+    if (!memo.trim()) {
+        throw new Error("棚卸理由を入力してください");
+    }
+
+    const difference = actualStock - product.stock;//実在庫数と登録在庫の差分
+    const type =
+        difference > 0
+            ? "IN"
+            : difference < 0
+                ? "OUT"
+                : "CHECK";
+
+    //トランザクション機能による更新(どちらかがダメだと実行されない)
+    //条件１、在庫テーブルの在庫数を棚卸数更新
+    await db.transaction(async (tx) => {
+        await tx
             .update(products)
             .set({
-                // isActive: false,⇐将来、論理削除を採用する場合はこの行を有効にする26/8/23
-                deletedAt: new Date().toISOString(),
+                stock: actualStock,
             })
-            .where(eq(products.id, id));//eqは=の意味
-        redirect("/inventory");
-    }
-
-    export async function updateStock(
-        id: number,//引数:idは一意の為、商品名を確実に絞り込める
-        formData: FormData//引数:formDataを型として引数に設定
-    ) {
-        await requireAdmin();
-        const memo = formData.get("memo") as string;//formDataよりname(商品名)を取得
-        const quantity = Number(formData.get("quantity")) as number;//formDataよりquantity(増減値)を取得
-
-        const product = await db.query.products.findFirst({//DBからproduct(テーブルを取得)
-            where: eq(products.id, id),
-        });
-
-
-        if (!product) {
-            throw Error("商品が見つかりません")
-        }
-
-        const type = quantity > 0 ? "IN" : "OUT";
-        const newStock = product.stock + quantity;
-
-        if (
-            Number.isNaN(quantity)
-        ) {
-            throw new Error("入出庫数は数値を入力してください")
-        }
-
-        if (
-            quantity === 0
-        ) {
-            throw new Error("入出庫数に0は入力できません")
-        }
-
-        if (
-            newStock < 0) {
-            throw new Error("在庫が不足してしまいます")
-        }
-
-
-        await db.transaction(async (tx) => { 
-            await tx
-                .update(products)
-                .set({
-                    stock: newStock,
-                })
-                .where(eq(products.id, id));
-
-            await tx.insert(stockHistories).values({
+            .where(eq(products.id, id));
+        //条件２、入出庫履歴に追記
+        await tx
+            .insert(stockHistories)
+            .values({
                 productId: id,
-                quantity,
+                quantity: difference,
                 type,
-                memo,
-            })
-        })
-        redirect("/inventory");//結果をredirectでinventoryに表示
-    }
+                memo: `変更前:${product.stock}/変更後:${actualStock}/理由:${memo}`
+            });
+    });
 
-    export async function adjustStock(
-        id: number,
-        formatData: FormData
-    ) {
-        await requireAdmin();
-        const actualStock = Number(formatData.get("actualStock"));
-        const memo = formatData.get("memo") as string;
+    redirect("/inventory")
 
-        const product = await db.query.products.findFirst({
-            where: eq(products.id, id),
-        });
-
-        if (!product) {
-            throw new Error("商品が見つかりません");
-        }
-
-        if (Number.isNaN(actualStock)) {
-            throw new Error("実在庫数は数値を入力してください");
-        }
-
-        if (actualStock < 0) {
-            throw new Error("実在庫数にマイナスは入力できません");
-        }
-
-        if (!memo.trim()) {
-            throw new Error("棚卸理由を入力してください");
-        }
-
-        const difference = actualStock - product.stock;//実在庫数と登録在庫の差分
-        const type  =
-            difference >0
-                ?"IN"
-                :difference<0
-                    ?"OUT"
-                    :"CHECK";
-
-        //トランザクション機能による更新(どちらかがダメだと実行されない)
-        //条件１、在庫テーブルの在庫数を棚卸数更新
-        await db.transaction(async (tx) => {
-            await tx
-                .update(products)
-                .set({
-                    stock: actualStock,
-                })
-                .where(eq(products.id, id));
-            //条件２、入出庫履歴に追記
-            await tx
-                .insert(stockHistories)
-                .values({
-                    productId: id,
-                    quantity: difference,
-                    type,
-                    memo: `変更前:${product.stock}/変更後:${actualStock}/理由:${memo}`
-                });
-        });
-
-        redirect("/inventory")
-
-    }
+}

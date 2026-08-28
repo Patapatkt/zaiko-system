@@ -16,7 +16,7 @@ export default function NewProductPage() {
                 商品入庫
             </h1>
             {state?.error &&(
-                <p className="error-message">
+                 <p style={{ color: "red"}}>
                     {state.error}
                 </p>
             )
