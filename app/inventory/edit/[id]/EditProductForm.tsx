@@ -32,7 +32,7 @@ export default function EditProductForm({
     return (
         <form action={formAction}>
             {state?.error && (
-                <p className="error-message">
+                <p style={{ color: "red"}}>
                     {state.error}
                 </p>
             )}
@@ -45,17 +45,6 @@ export default function EditProductForm({
                     specification: product.specification ?? "",
                 }}
             />
-            
-            <div className="form-group">
-                <label>価格</label>
-                <input
-                    type="number"
-                    name="price"
-                    defaultValue={product.price}
-                    className="form-input"
-                    required
-                />
-            </div>
 
             <div className="header-actions">
                 <button

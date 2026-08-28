@@ -6,6 +6,8 @@ import Link from "next/link";
 import { eq, like, or } from "drizzle-orm";//⇐andを削除
 import { getSession } from "@/actions/auth"
 import { redirect } from 'next/navigation';
+import SearchForm from "@/components/SearchForm";
+
 
 export default async function InventoryPage(
 
@@ -36,11 +38,6 @@ export default async function InventoryPage(
     const { keyword = "" } = await searchParams
     const trimmedKeyword = keyword.trim();
 
-    // 検索文字が数字に変換できるか確認
-    const keywordPrice = Number(trimmedKeyword);
-    const isPriceSearch =
-        trimmedKeyword !== "" && !Number.isNaN(keywordPrice);
-
     //検索文字が空ならDB検索を行わず、空の配列にする
     const productList =
         trimmedKeyword === ""
@@ -53,29 +50,25 @@ export default async function InventoryPage(
                     // productsにisActiveを追加し、ここで取り扱い中の商品だけに絞り込む
                     //     // 取り扱い中の商品だけを対象にする
                     //     eq(products.isActive, true),//⇐ここが修正が必要
-                    isPriceSearch
-                        ? or(
-                            like(
-                                products.code,
-                                `%${trimmedKeyword}%`
-                            ),
-                            (
-                                like(
-                                    products.name,
-                                    `%${trimmedKeyword}%`)
-                            ),
-                            eq(products.price, keywordPrice)
+
+                    or(
+                        like(
+                            products.code,
+                            `%${trimmedKeyword}%`
+                        ),
+                        like(
+                            products.shelf,
+                            `%${trimmedKeyword}%`
+                        ),
+                        like(
+                            products.name,
+                            `%${trimmedKeyword}%`
+                        ),
+                        like(
+                            products.specification,
+                            `%${trimmedKeyword}%`
                         )
-                        : or(
-                            like(
-                                products.code,
-                                `%${trimmedKeyword}%`
-                            ),
-                            like(
-                                products.name,
-                                `%${trimmedKeyword}%`
-                            )
-                        )
+                    )
                 );
 
 
@@ -87,24 +80,11 @@ export default async function InventoryPage(
 
             </div>
 
-            <form
+            <SearchForm
                 action="/inventory"
-                className="searcharea">
-                <input
-                    type="text"
-                    name="keyword"
-                    placeholder="商品コード・棚番・商品名・仕様・価格で検索"
-                    defaultValue={keyword}
-                    className="search-input"
-                />
-                <button
-                    type="submit"
-                    className="button button-success search-button"
-                >
-                    検索
-                </button>
-            </form>
-
+                keyword={trimmedKeyword}
+                placeholder="商品コード・棚番・商品名・仕様で検索"
+            />
             <div className="table-wrapper">
                 <table className="common-table">
                     <thead>
@@ -112,7 +92,6 @@ export default async function InventoryPage(
                             <th>商品コード</th>
                             <th>棚番</th>{/*⇐棚番を追加26/8/23 */}
                             <th>商品名</th>
-                            <th>価格</th>
                             <th>仕様</th>
                             <th>在庫</th>
                             <th>操作</th>
@@ -124,16 +103,16 @@ export default async function InventoryPage(
                             <tr>
                                 <td
 
-                                    colSpan={7}
+                                    colSpan={6}
                                     className="text-center p-4"
                                 >
-                                    商品コード・商品名・価格を入力して検索してください
+                                    商品コード・棚番・商品名・仕様を入力して検索してください
                                 </td>
                             </tr>
                         ) :
                             productList.length === 0 ? (
                                 <tr>
-                                    <td colSpan={7} className="text-center p-4">
+                                    <td colSpan={6} className="text-center p-4">
                                         該当する商品はありません
                                     </td>
                                 </tr>
@@ -144,7 +123,6 @@ export default async function InventoryPage(
                                             <td>{product.code}</td>
                                             <td>{product.shelf ?? "未設定"}</td>
                                             <td>{product.name}</td>
-                                            <td>{product.price.toLocaleString()}円</td>
                                             <td>{product.specification ?? "未設定"}</td>
                                             <td>{product.stock}</td>
                                             <td>

@@ -15,7 +15,13 @@ export default function NewProductPage() {
             <h1 className="page-title">
                 商品入庫
             </h1>
+            {state?.error &&(
+                <p className="error-message">
+                    {state.error}
+                </p>
+            )
 
+            }
             <form action={formAction} className="space-y-4">
                 <ProductFormFields/>
 

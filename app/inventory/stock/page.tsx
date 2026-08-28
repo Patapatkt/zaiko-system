@@ -1,9 +1,9 @@
 //在庫メンテナンス検索画面
-import { like } from "drizzle-orm";
+import { or,like } from "drizzle-orm";
 import { db } from "@/db";
 import { products } from "@/db/schema";
 import Link from "next/link";
-
+import SearchForm from "@/components/SearchForm";//コンポーネント追加26/8/26
 
 export default async function StockPage({
     searchParams,//引数設定
@@ -21,8 +21,14 @@ export default async function StockPage({
             : await db//キーワードがあったら対象情報を取得
                 .select()
                 .from(products)
-                .where(like(products.name, `%${trimmedKeyword}%`)//商品名にkeywordを含んでい商品を検索＿
-                );
+                .where
+                (or(
+                    like(products.name, `%${trimmedKeyword}%`),
+                    like(products.code, `%${trimmedKeyword}%`),
+                    like(products.shelf, `%${trimmedKeyword}%`),
+                    like(products.specification, `%${trimmedKeyword}%`)
+                ))
+    ;
     return (
         <main className="page-container">
             <div className="page-header">
@@ -31,27 +37,11 @@ export default async function StockPage({
                 </h1>
             </div>
 
-            <form
+            <SearchForm
                 action="/inventory/stock"
-                method="GET"
-                className="searcharea"
-            >
-
-                <input
-                    type="text"
-                    name="keyword"
-                    defaultValue={keyword}
-                    placeholder="商品名を入力"
-                    className="search-input"
-                />
-
-                <button
-                    type="submit"
-                    className="button button-success search-button"
-                >
-                    検索
-                </button>
-            </form >
+                keyword={keyword}
+                placeholder="商品名・商品コード・棚番・仕様を入力"
+            />
 
             {/* 検索結果が見つからなかった時の表示 */}
             <div className="table-wrapper">
@@ -61,6 +51,7 @@ export default async function StockPage({
                             <th>商品コード</th>
                             <th>棚番</th>{/*⇐棚番を追加 */}
                             <th>商品名</th>
+                            <th>商品仕様</th>
                             <th>現在庫</th>
                             <th>操作</th>
                         </tr>
@@ -70,7 +61,7 @@ export default async function StockPage({
                         {trimmedKeyword === "" ? (
                             <tr>
                                 <td
-                                    colSpan={5}
+                                    colSpan={6}
                                     className="text-center p-4"
                                 >
                                     商品名を入力して検索してください
@@ -79,7 +70,7 @@ export default async function StockPage({
                         ) :
                             productList.length === 0 ? (
                                 <tr>
-                                    <td colSpan={5} className="text-center px-4">
+                                    <td colSpan={6} className="text-center px-4">
                                         該当する商品はありません
                                     </td>
                                 </tr>
@@ -96,6 +87,9 @@ export default async function StockPage({
                                             </td>
                                             <td>
                                                 {product.name}
+                                            </td>
+                                            <td>
+                                                {product.specification}
                                             </td>
                                             <td>
                                                 {product.stock}

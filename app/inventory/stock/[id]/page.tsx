@@ -99,7 +99,7 @@ export default async function stockPage({
                 </div>
             </form>
         <Link
-            href="/dashboard"
+            href="/inventory/stock"
             className="button button-secondary"
         >
             メニュー

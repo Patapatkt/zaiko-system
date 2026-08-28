@@ -29,16 +29,16 @@ export default async function EditPage({
                     商品編集
                 </h1>
                 <div>
-                    <EditProductForm 
+                    <EditProductForm
                         product={{
                             id: product.id,
                             code: product.code,
-                            shelf: product.shelf??"",
+                            shelf: product.shelf ?? "",
                             name: product.name,
                             specification: product.specification,
                             price: product.price,
                         }}
-                        />
+                    />
                 </div>
             </div>
         </main>

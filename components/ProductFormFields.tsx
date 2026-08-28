@@ -51,7 +51,6 @@ export default function ProductFormFields({
             <div className="form-group">
                 <label>商品仕様</label>
                 <input
-
                     name="specification"
                     defaultValue={defaultValues.specification ?? ""}
                     className="form-input"
