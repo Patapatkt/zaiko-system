@@ -1,5 +1,6 @@
 //在庫メンテナンス検索画面
-import { or,like } from "drizzle-orm";
+import { like, and } from "drizzle-orm";
+import { requireAdmin } from "@/utils/auth";
 import { db } from "@/db";
 import { products } from "@/db/schema";
 import Link from "next/link";
@@ -9,26 +10,45 @@ export default async function StockPage({
     searchParams,//引数設定
 }: {
     searchParams: Promise<{
-        keyword?: string;//引数にはキーワード:型は文字列
+        name?: string;
+        shelf?: string;
+        specification?: string;
     }>;
 }) {
-    const { keyword = "" } = await searchParams;
-    const trimmedKeyword = keyword.trim();
+    await requireAdmin();
 
-    const productList =
-        trimmedKeyword === ""
-            ? []//キーワードがなかったら空配列
-            : await db//キーワードがあったら対象情報を取得
-                .select()
-                .from(products)
-                .where
-                (or(
-                    like(products.name, `%${trimmedKeyword}%`),
-                    like(products.code, `%${trimmedKeyword}%`),
-                    like(products.shelf, `%${trimmedKeyword}%`),
-                    like(products.specification, `%${trimmedKeyword}%`)
+    const { name = "",
+        shelf = "",
+        specification = ""
+    } = await searchParams;
+    const trimmedName = name.trim();
+    const trimmedShelf = shelf.trim();
+    const trimmedSpecification = specification.trim();
+    const isSearchEmpty =
+        trimmedName === "" &&
+        trimmedShelf === "" &&
+        trimmedSpecification === "";
+
+    const productList = isSearchEmpty
+
+        ? []//キーワードがなかったら空配列
+        : await db//キーワードがあったら対象情報を取得
+            .select()
+            .from(products)
+            .where
+            (
+                and(
+                    trimmedShelf
+                        ? like(products.shelf, `%${trimmedShelf}%`)
+                        : undefined,
+                    trimmedName
+                        ? like(products.name, `%${trimmedName}%`)
+                        : undefined,
+                    trimmedSpecification
+                        ? like(products.specification, `%${trimmedSpecification}%`)
+                        : undefined,
                 ))
-    ;
+        ;
     return (
         <main className="page-container">
             <div className="page-header">
@@ -36,11 +56,11 @@ export default async function StockPage({
                     在庫メンテナンス
                 </h1>
             </div>
-
             <SearchForm
                 action="/inventory/stock"
-                keyword={keyword}
-                placeholder="商品名・商品コード・棚番・仕様を入力"
+                name={trimmedName}
+                shelf={trimmedShelf}
+                specification={trimmedSpecification}
             />
 
             {/* 検索結果が見つからなかった時の表示 */}
@@ -58,13 +78,13 @@ export default async function StockPage({
                     </thead>
 
                     <tbody>
-                        {trimmedKeyword === "" ? (
+                        {isSearchEmpty ? (
                             <tr>
                                 <td
                                     colSpan={6}
                                     className="text-center p-4"
                                 >
-                                    商品名を入力して検索してください
+                                    棚番・商品名・仕様を入力して検索してください
                                 </td>
                             </tr>
                         ) :
@@ -83,13 +103,13 @@ export default async function StockPage({
                                                 {product.code}
                                             </td>
                                             <td>
-                                                {product.shelf}
+                                                {product.shelf ?? "未設定"}
                                             </td>
                                             <td>
                                                 {product.name}
                                             </td>
                                             <td>
-                                                {product.specification}
+                                                {product.specification ?? "未設定"}
                                             </td>
                                             <td>
                                                 {product.stock}
@@ -116,7 +136,6 @@ export default async function StockPage({
             >
                 メニュー
             </Link>
-
         </main >
 
     )

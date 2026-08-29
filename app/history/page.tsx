@@ -1,95 +1,137 @@
 //必要ファイル・関数を使えるように読み込み
 import { db } from "@/db";//dbを読み込み
 import { products, stockHistories } from "@/db/schema";//schemaより
-import { desc, eq, like, or } from "drizzle-orm";//desc(降順),eq(=)を使えるようにする
+import { and, desc, eq, like } from "drizzle-orm";//desc(降順),eq(=)を使えるようにする
 import Link from "next/link";//Linkを使えるようにする
-import SearchForm from "@/components/SearchForm";//検索フォームを使えるようにする
+import HistorySearchForm from "@/components/HistorySearchForm";
 
 export default async function HistoryPage({
     searchParams,
 }: {
     searchParams: Promise<{
-        keyword?: string
+        date?: string;
+        code?: string;
+        shelf?: string;
+        name?: string;
+        specification?: string;
+        type?: string;
+        quantity?: string;
+        memo?: string;
     }>;
 }) {
     //検索文字を取得し前後の空白を削除
-    const { keyword = "" } = await searchParams;
-    const trimmedKeyword = keyword.trim();
+    const { date = "",
+        code = "",
+        shelf = "",
+        name = "",
+        specification = "",
+        type = "",
+        quantity = "",
+        memo = "",
+    } = await searchParams;
+    //各検索文字を取得し前後の空白を削除
+    const trimmedDate = date.trim();
+    const trimmedCode = code.trim();
+    const trimmedShelf = shelf.trim();//棚番
+    const trimmedName = name.trim();//商品名
+    const trimmedSpecification = specification.trim();//仕様 
+    const trimmedType = type.trim();
+    const trimmedQuantity = quantity.trim();
+    const trimmedMemo = memo.trim();
 
+    // 全てが空白だった場合を定数に格納
+    const isSearchEmpty =
+        trimmedDate === "" &&
+        trimmedCode === "" &&
+        trimmedShelf === "" &&
+        trimmedName === "" &&
+        trimmedSpecification === "" &&
+        trimmedType === "" &&
+        trimmedQuantity === "" &&
+        trimmedMemo === "";
     //検索文字を数値へ変換
-    const keywordQuantity = Number(trimmedKeyword);
-    const isQuantitySearch =
-        trimmedKeyword !== "" &&//検索欄が空ではなく
-        !Number.isNaN(keywordQuantity);//数値に変換できる
-
-
+    const keywordQuantity =
+        trimmedQuantity === ""
+            ? null
+            : Number(trimmedQuantity);
+    const isQuantitySearch = trimmedQuantity;
+    const isQuantityValid =
+        keywordQuantity === null ||
+        !Number.isNaN(keywordQuantity);
     //HistoryPageを設定
-    const histories =
-        trimmedKeyword === ""
-            ? []
-            : await db
-                .select({//stockHistories,productsより必要情報を取得
-                    id: stockHistories.id,
-                    productCode: products.code,
-                    productShelf: products.shelf,
-                    productName: products.name,
-                    productSpecification: products.specification,
-                    quantity: stockHistories.quantity,
-                    type: stockHistories.type,
-                    memo: stockHistories.memo,
-                    createdAt: stockHistories.createdAt,
-                })
-                .from(stockHistories)//stockHistories(入出庫履歴)を基準に
-                // stockHistories.productId,products.idが一致している商品を結合
-                .innerJoin(//結合させる命令
-                    products,
-                    eq(stockHistories.productId, products.id)
-                )
-                .where(
-                    isQuantitySearch
-                        ? or(
-                            like(
-                                products.code,
-                                `%${trimmedKeyword}%`
-                            ),
-                            like(
-                                products.shelf,
-                                `%${trimmedKeyword}%`
-                            ),
-                            like(
-                                products.name,
-                                `%${trimmedKeyword}%`
-                            ),
-                            like(
-                                products.specification,
-                                `%${trimmedKeyword}%`
-                            ),
-
-                            eq(
-                                stockHistories.quantity,
-                                keywordQuantity
-                            )
+    const histories = isSearchEmpty || !isQuantityValid
+        ? []
+        : await db
+            .select({//stockHistories,productsより必要情報を取得
+                id: stockHistories.id,
+                productCode: products.code,
+                productShelf: products.shelf,
+                productName: products.name,
+                productSpecification: products.specification,
+                quantity: stockHistories.quantity,
+                type: stockHistories.type,
+                memo: stockHistories.memo,
+                createdAt: stockHistories.createdAt,
+            })
+            .from(stockHistories)//stockHistories(入出庫履歴)を基準に
+            // stockHistories.productId,products.idが一致している商品を結合
+            .innerJoin(//結合させる命令
+                products,
+                eq(stockHistories.productId, products.id)
+            )
+            .where(
+                and(
+                    trimmedDate
+                        ? like(
+                            stockHistories.createdAt,
+                            `%${trimmedDate}%`
                         )
-                        : or(
-                            like(
-                                products.code,
-                                `%${trimmedKeyword}%`
-                            ),
-                            like(
-                                products.shelf,
-                                `%${trimmedKeyword}%`
-                            ),
-                            like(
-                                products.name,
-                                `%${trimmedKeyword}%`
-                            ),
-                            like(
-                                products.specification,
-                                `%${trimmedKeyword}%`
-                            )
+                        : undefined,
+                    trimmedCode
+                        ? like(
+                            products.code,
+                            `%${trimmedCode}%`
                         )
+                        : undefined,
+                    trimmedShelf
+                        ? like(
+                            products.shelf,
+                            `%${trimmedShelf}%`
+                        )
+                        : undefined,
+                    trimmedName
+                        ? like(
+                            products.name,
+                            `%${trimmedName}%`
+                        )
+                        : undefined,
+                    trimmedSpecification
+                        ? like(
+                            products.specification,
+                            `%${trimmedSpecification}%`
+                        )
+                        : undefined,
+                    trimmedType
+                        ? eq(
+                            stockHistories.type,
+                            trimmedType
+                        )
+                        : undefined,
+                    keywordQuantity !== null
+                        ? eq(
+                            stockHistories.quantity,
+                            keywordQuantity
+                        )
+                        : undefined,
+                    trimmedMemo
+                        ? like(
+                            stockHistories.memo,
+                            `%${trimmedMemo}%`
+                        )
+                        : undefined
                 )
-                .orderBy(desc(stockHistories.createdAt));//stockHistories(入出庫履歴)よりcreatedAtを降順で表示
+            )
+            .orderBy(desc(stockHistories.createdAt));//stockHistories(入出庫履歴)よりcreatedAtを降順で表示
 
     return (//画面を表示
         <main className="page-container">
@@ -99,10 +141,18 @@ export default async function HistoryPage({
                 </h1>
             </div>
 
-            <SearchForm
+            <HistorySearchForm
                 action="/history"
-                keyword={keyword}
-                placeholder="商品名・商品コード・棚番・仕様・数量を入力してください"
+                defaultValues={{
+                    date: trimmedDate,
+                    code: trimmedCode,
+                    shelf: trimmedShelf,
+                    name: trimmedName,
+                    specification: trimmedSpecification,
+                    quantity: trimmedQuantity,
+                    type: trimmedType,
+                    memo: trimmedMemo,
+                }}
             />
 
             <div className="table-wrapper">
@@ -114,7 +164,7 @@ export default async function HistoryPage({
                             <th>棚番</th>
                             <th>商品名</th>
                             <th>商品仕様</th>
-                            <th>種別</th>
+                            <th>区分</th>
                             <th>数量</th>
                             <th>理由</th>
                         </tr>
@@ -123,14 +173,13 @@ export default async function HistoryPage({
 
                     <tbody>
 
-                        {trimmedKeyword === "" ? (
+                        {isSearchEmpty ? (
                             <tr>
                                 <td
                                     colSpan={8}
                                     className="text-center p-4"
                                 >
-                                    商品名・商品コード・棚番・仕様・数量を入力して
-                                    検索してください
+                                    検索内容を入力して検索してください
                                 </td>
                             </tr>
                         ) : histories.length === 0 ? (//履歴がなかったら(0)
@@ -154,7 +203,7 @@ export default async function HistoryPage({
                                         {history.productName}
                                     </td>
                                     <td>
-                                        {history.productSpecification??"未設定"}
+                                        {history.productSpecification ?? "未設定"}
                                     </td>
                                     <td>
                                         {history.type === "IN"

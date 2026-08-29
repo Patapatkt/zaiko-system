@@ -3,20 +3,21 @@ import { db } from "@/db";
 import { products, users } from "@/db/schema";
 import { deleteProduct } from "@/actions/inventory";
 import Link from "next/link";
-import { eq, like, or } from "drizzle-orm";//⇐andを削除
+import { and, eq, like, or } from "drizzle-orm";//⇐andを削除
 import { getSession } from "@/actions/auth"
 import { redirect } from 'next/navigation';
 import SearchForm from "@/components/SearchForm";
-import { createProduct } from "@/actions/inventory";
 
 export default async function InventoryPage(
-    
+
     {
         searchParams,
     }: {
         searchParams: Promise<{
-            keyword?: string;
-            succsess?:string;
+            name?: string;
+            shelf?: string;
+            specification?: string;
+            succsess?: string;
         }>;
     }
 ) {//ログイン確認
@@ -35,61 +36,71 @@ export default async function InventoryPage(
 
     const isAdmin = currentUser.role === "admin";
 
-    //検索文字を取得し前後の空白を削除
-    const { keyword = "" ,
+    const { name = "",
+        shelf = "",
+        specification = "",
         succsess,
     } = await searchParams
-    const trimmedKeyword = keyword.trim();
 
-    //検索文字が空ならDB検索を行わず、空の配列にする
-    const productList =
-        trimmedKeyword === ""
-            ? []
-            : await db
-                .select()
-                .from(products)
-                .where(
-                    // and(// 将来、論理削除を採用する場合は
-                    // productsにisActiveを追加し、ここで取り扱い中の商品だけに絞り込む
-                    //     // 取り扱い中の商品だけを対象にする
-                    //     eq(products.isActive, true),//⇐ここが修正が必要
+    //各検索文字を取得し前後の空白を削除
+    const trimmedName = name.trim();//商品名
+    const trimmedShelf = shelf.trim();//棚番
+    const trimmedSpecification = specification.trim();//仕様
 
-                    or(
-                        like(
-                            products.code,
-                            `%${trimmedKeyword}%`
-                        ),
-                        like(
-                            products.shelf,
-                            `%${trimmedKeyword}%`
-                        ),
-                        like(
-                            products.name,
-                            `%${trimmedKeyword}%`
-                        ),
-                        like(
-                            products.specification,
-                            `%${trimmedKeyword}%`
-                        )
+    // 全てが空白だった場合を定数に格納
+    const isSearchEmpty =
+        trimmedName === "" &&
+        trimmedShelf === "" &&
+        trimmedSpecification === "";
+
+    //検索文字が全て空ならDB検索を行わず、空の配列にする
+    const productList = isSearchEmpty
+        ? []
+        : await db
+            .select()
+            .from(products)
+            .where(
+                // and(// 将来、論理削除を採用する場合は
+                // productsにisActiveを追加し、ここで取り扱い中の商品だけに絞り込む
+                //     // 取り扱い中の商品だけを対象にする
+                //     eq(products.isActive, true),//⇐ここが修正が必要
+
+                and(
+
+                    like(
+                        products.shelf,
+                        `%${trimmedShelf}%`
+                    ),
+                    like(
+                        products.name,
+                        `%${trimmedName}%`
+                    ),
+                    like(
+                        products.specification,
+                        `%${trimmedSpecification}%`
                     )
-                );
+                )
+            );
 
 
     return (
+
         <main className="page-container">
             <div className="page-header">
                 <h1 className="page-title">商品一覧</h1>
             </div>
-            {succsess==="created"&&(
+            {succsess === "created" && (
                 <p className="succsess-message">
                     商品登録成功
                 </p>
             )}
             <SearchForm
                 action="/inventory"
-                keyword={trimmedKeyword}
-                placeholder="商品コード・棚番・商品名・仕様で検索"
+                name={trimmedName}
+                shelf={trimmedShelf}
+                specification={trimmedSpecification}
             />
+
             <div className="table-wrapper">
                 <table className="common-table">
                     <thead>
@@ -104,14 +115,14 @@ export default async function InventoryPage(
                     </thead>
 
                     <tbody>
-                        {trimmedKeyword === "" ? (
+                        {isSearchEmpty ? (
                             <tr>
                                 <td
 
                                     colSpan={6}
                                     className="text-center p-4"
                                 >
-                                    商品コード・棚番・商品名・仕様を入力して検索してください
+                                    棚番・商品名・仕様を入力して検索してください
                                 </td>
                             </tr>
                         ) :

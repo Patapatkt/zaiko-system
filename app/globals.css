@@ -282,6 +282,17 @@ body {
   margin-bottom: 20px;
 }
 
+.history-seacharea{
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.search-input-wide {
+    grid-column: span 2;
+}
+
 /* ========================================
    レスポンシブ対応
 ======================================== */
@@ -382,4 +393,14 @@ body {
     padding: 10px 12px;
     white-space: nowrap;
   }
+}
+
+@media (max-width: 768px) {
+    .history-searcharea {
+        grid-template-columns: 1fr;
+    }
+
+    .search-input-wide {
+        grid-column: span 1;
+    }
 }
