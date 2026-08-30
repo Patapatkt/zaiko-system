@@ -5,7 +5,6 @@ import { products, stockHistories } from "@/db/schema";
 import { eq } from "drizzle-orm"
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/utils/auth";
-import { log } from "console";
 
 type ProductState = {
     error: string;
@@ -46,10 +45,10 @@ export async function createProduct(
         }
     }
 
-    // 初期在庫が-(マイナス)で登録された時のガード節
-    if (stock < 0) {
+    // 初期在庫が0以下で登録された時のガード節
+    if (stock <= 0) {
         return {
-            error: "初期在庫にマイナスは入力できません。入力値を確認してください"
+            error: "初期在庫にマイナス・0は入力できません。入力値を確認してください"
         }
     }
 
@@ -83,7 +82,7 @@ export async function createProduct(
         }
     });
 
-    redirect("/inventory?succsess=created");//トランザクションが成功したら/inventoryへ
+    redirect("/inventory/new?success=created");//トランザクションが成功したら/inventoryへ
 }
 
 export async function updateProduct(

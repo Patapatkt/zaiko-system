@@ -25,7 +25,7 @@ export default async function Home() {
       <div className="w-full max-w-2xl bg-gray-300 rounded-xl shadow-lg p-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-2">
-            在庫管理システム
+            くだもの管理システム
           </h1>
           <p className="inline-block border-b border-black-300 pb-2">
             {user.username}さん こんにちは！
@@ -36,7 +36,14 @@ export default async function Home() {
             href="/inventory"
             className="bg-blue-500 hover:bg-blue-600 text-2xl text-center font-bold px-4 py-6 rounded"
           >
-            在庫一覧
+            商品一覧
+          </Link>
+          
+          <Link
+            href="/inventory/new"
+            className="bg-blue-500 hover:bg-blue-600 text-2xl text-center font-bold px-4 py-6 rounded"
+          >
+            商品入庫
           </Link>
 
           {user.role === "admin" && (
@@ -44,7 +51,7 @@ export default async function Home() {
               href="/inventory/stock"
               className="bg-blue-500 hover:bg-blue-600 text-2xl text-center font-bold px-4 py-6 rounded-lg"
             >
-              在庫修正
+             商品在庫修正
             </Link>
           )}
           <Link

@@ -23,7 +23,5 @@ async function main() {
     await migrate(db, {
         migrationsFolder: "drizzle",//drizzleフォルダの保存場所を教える
     });
-
-    console.log("棚増設完了");
 }
 main();

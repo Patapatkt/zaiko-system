@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";//2つの関数を使えるようにする
 import { decrypt } from "@/lib/jwt";//関数decryptを読み込み
 
-const PUBLIC_PATHS = ["/login", "/register"];//ログイン不要でアクセスできるページ(PUBULIC)を配列に格納
+const PUBLIC_PATHS = ["/login"];//ログイン不要でアクセスできるページ(PUBULIC)を配列に格納
 
 //proxy関数作成
 export async function proxy(request: NextRequest) {

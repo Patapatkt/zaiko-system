@@ -36,6 +36,13 @@
       "when": 1787660229568,
       "tag": "0004_add-product-specification",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1788057506524,
+      "tag": "0005_late_edwin_jarvis",
+      "breakpoints": true
     }
   ]
 }

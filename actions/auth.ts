@@ -13,6 +13,7 @@ import { cookies } from "next/headers";//cookiesへアクセスできるよう�
 import { redirect } from "next/navigation";//認証成功画面へアクセスできるようにする
 
 import bcrypt from "bcryptjs";//ハッシュ化の比較の為にbcryptを使えるようにする
+import { error } from "console";
 
 export async function login(
     prevState:unknown,
@@ -44,6 +45,13 @@ export async function login(
         }
     }
 
+    // 管理者による利用承認を確認
+    if(!user.isApproved){
+        return{
+            error:"現在、管理者の承認待ちです。",
+        }
+    }
+
     // JWT作成　メールアドレス・パスワードが一致していたらJWTを会員証として発行
     const session = await encrypt({
         userId: user.id,
@@ -67,10 +75,32 @@ export async function login(
 //ログイン中のユーザー情報取得
 export async function getSession() {
     const session = (await cookies()).get("session")?.value//cookiesのから"session"を取得、なければ未定義
+    // JWTの署名と有効期限を確認
+    const payload = await decrypt(session);
+    // JWTがない、または無効な場合
+    if (
+        !payload ||typeof payload.userId !== "number"
+    ) {
+        return null;
+    }
+     // JWT内のuserIdに該当する現在のユーザーを取得
+    const user = await db.query.users.findFirst({
+        where: eq(users.id, payload.userId),
+        columns: {
+            id: true,
+            isApproved: true,
+        },
+    });
 
-    return await decrypt(session) as {
-        userId: number;
-    } | null;//decryptでsessionを確認
+    // ユーザーが削除済み、または管理者未承認の場合
+    if (!user || !user.isApproved) {
+        return null;
+    }
+
+    // 現在も承認されているユーザーだけ認証成功
+    return {
+        userId: user.id,
+    };
 }
 
 //deleteSession作成

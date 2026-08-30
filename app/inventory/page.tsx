@@ -3,7 +3,7 @@ import { db } from "@/db";
 import { products, users } from "@/db/schema";
 import { deleteProduct } from "@/actions/inventory";
 import Link from "next/link";
-import { and, eq, like, or } from "drizzle-orm";//⇐andを削除
+import { and, eq, like } from "drizzle-orm";//⇐andを削除
 import { getSession } from "@/actions/auth"
 import { redirect } from 'next/navigation';
 import SearchForm from "@/components/SearchForm";
@@ -17,7 +17,7 @@ export default async function InventoryPage(
             name?: string;
             shelf?: string;
             specification?: string;
-            succsess?: string;
+            success?: string;
         }>;
     }
 ) {//ログイン確認
@@ -39,7 +39,7 @@ export default async function InventoryPage(
     const { name = "",
         shelf = "",
         specification = "",
-        succsess,
+        success,
     } = await searchParams
 
     //各検索文字を取得し前後の空白を削除
@@ -65,20 +65,16 @@ export default async function InventoryPage(
                 //     // 取り扱い中の商品だけを対象にする
                 //     eq(products.isActive, true),//⇐ここが修正が必要
 
-                and(
-
-                    like(
-                        products.shelf,
-                        `%${trimmedShelf}%`
-                    ),
-                    like(
-                        products.name,
-                        `%${trimmedName}%`
-                    ),
-                    like(
-                        products.specification,
-                        `%${trimmedSpecification}%`
-                    )
+                and(//空白の場合は検索条件から除外
+                    trimmedShelf
+                        ? like(products.shelf, `%${trimmedShelf}%`)
+                        : undefined,
+                    trimmedName
+                        ? like(products.name, `%${trimmedName}%`)
+                        : undefined,
+                    trimmedSpecification
+                        ? like(products.specification, `%${trimmedSpecification}%`)
+                        : undefined,
                 )
             );
 
@@ -89,8 +85,8 @@ export default async function InventoryPage(
             <div className="page-header">
                 <h1 className="page-title">商品一覧</h1>
             </div>
-            {succsess === "created" && (
-                <p className="succsess-message">
+            {success === "created" && (
+                <p className="success-message">
                     商品登録成功
                 </p>
             )}
@@ -173,13 +169,8 @@ export default async function InventoryPage(
                 </table>
             </div>
 
-            {/* +商品登録追加 */}
+            {/* 履歴画面 */}
             <div className="header-actions">
-                <Link href="/inventory/new"
-                    className="button button-primary"
-                >
-                    +商品入庫
-                </Link>
                 <Link href="/history"
                     className="button button-primary"
                 >

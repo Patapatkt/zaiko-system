@@ -22,6 +22,13 @@ export const users = sqliteTable("users", {
     .$defaultFn(() => "user")
     .notNull(),
 
+  // 管理者による利用承認
+    isApproved: integer("is_approved", {
+        mode: "boolean",
+    })
+        .notNull()
+        .default(false),
+
   createdAt: text("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
