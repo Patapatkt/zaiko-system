@@ -54,12 +54,12 @@ export default async function form() {
                 </button>
             </form>
 
-            {/* <Link 
+            <Link 
                 href="/register"
                 className="auth-link"
             >
                 新規登録はこちら
-            </Link> */}
+            </Link>
         </>
     )
 }

@@ -25,7 +25,7 @@ export default async function Home() {
       <div className="w-full max-w-2xl bg-gray-300 rounded-xl shadow-lg p-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-2">
-            くだもの管理システム
+            くだものシステム
           </h1>
           <p className="inline-block border-b border-black-300 pb-2">
             {user.username}さん こんにちは！

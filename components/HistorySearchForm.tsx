@@ -1,6 +1,7 @@
 // 入出庫履歴専用のコンポーネント
 type HistorySearchValues = {
-    date: string;
+    startDate: string;
+    endDate:string;
     code: string;
     shelf: string;
     name: string;
@@ -22,14 +23,43 @@ export default function HistorySearchForm({
     return (
         <form
             action={action}
-            className="searcharea"
+            className="history-searcharea"
         >
+            {/* 1行目：日時 */}
+            <div className="history-date-range">
+                <div className="form-group">
+                    <label htmlFor="startDate">開始日時</label>
+                    <input 
+                        type="date" 
+                        id="startDate"
+                        name="startDate"
+                        defaultValue={defaultValues.startDate ?? ""}
+                        className="form-input"
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="endtDate">終了日時</label>
+                    <input 
+                        type="date" 
+                        id="endDate"
+                        name="endDate"
+                        defaultValue={defaultValues.endDate ?? ""}
+                        className="form-input"
+                    />
+                </div>
+            </div>
+
+            {/* 2行目：棚番・商品コード ・商品名・商品仕様*/}
             <div className="form-group">
-                <label>日時</label>
+                <label>棚番</label>
                 <input
-                    name="date"
-                    defaultValue={defaultValues.date ?? ""}
+                    type="text"
+                    name="shelf"
+
+                    defaultValue={defaultValues.shelf ?? ""}
                     className="form-input"
+                    maxLength={6}
                 />
             </div>
 
@@ -43,23 +73,12 @@ export default function HistorySearchForm({
             </div>
 
             <div className="form-group">
-                <label>棚番</label>
-                <input
-                    type="text"
-                    name="shelf"
-
-                    defaultValue={defaultValues.shelf ?? ""}
-                    className="form-input"
-                    maxLength={6}
-                />
-            </div>
-            <div className="form-group">
                 <label>商品名</label>
                 <input
 
                     name="name"
                     defaultValue={defaultValues.name ?? ""}
-                    className="search-input search-input-wide"
+                    className="search-input"
                 />
 
             </div>
@@ -69,6 +88,16 @@ export default function HistorySearchForm({
                 <input
                     name="specification"
                     defaultValue={defaultValues.specification ?? ""}
+                    className="form-input"
+                />
+            </div>
+
+            {/* 3行目：数量・区分 */}
+            <div className="form-group">
+                <label>数量</label>
+                <input
+                    name="quantity"
+                    defaultValue={defaultValues.quantity ?? ""}
                     className="form-input"
                 />
             </div>
@@ -88,15 +117,7 @@ export default function HistorySearchForm({
 
             </div>
 
-            <div className="form-group">
-                <label>数量</label>
-                <input
-                    name="quantity"
-                    defaultValue={defaultValues.quantity ?? ""}
-                    className="form-input"
-                />
-            </div>
-
+            {/* 5行目：理由 */}
             <div className="form-group">
                 <label>理由</label>
                 <input

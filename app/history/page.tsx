@@ -1,15 +1,17 @@
 //必要ファイル・関数を使えるように読み込み
 import { db } from "@/db";//dbを読み込み
 import { products, stockHistories } from "@/db/schema";//schemaより
-import { and, desc, eq, like } from "drizzle-orm";//desc(降順),eq(=)を使えるようにする
+import { and, desc, eq, like, sql } from "drizzle-orm";//desc(降順),eq(=)を使えるようにする
 import Link from "next/link";//Linkを使えるようにする
 import HistorySearchForm from "@/components/HistorySearchForm";
+import { date } from "drizzle-orm/mysql-core";
 
 export default async function HistoryPage({
     searchParams,
 }: {
     searchParams: Promise<{
-        date?: string;
+        startDate?: string;
+        endDate?: string;
         code?: string;
         shelf?: string;
         name?: string;
@@ -20,7 +22,9 @@ export default async function HistoryPage({
     }>;
 }) {
     //検索文字を取得し前後の空白を削除
-    const { date = "",
+    const {
+        startDate = "",
+        endDate = "",
         code = "",
         shelf = "",
         name = "",
@@ -30,7 +34,8 @@ export default async function HistoryPage({
         memo = "",
     } = await searchParams;
     //各検索文字を取得し前後の空白を削除
-    const trimmedDate = date.trim();
+    const trimmedStartDate = startDate.trim();
+    const trimmedEndDate = endDate.trim();
     const trimmedCode = code.trim();
     const trimmedShelf = shelf.trim();//棚番
     const trimmedName = name.trim();//商品名
@@ -41,7 +46,8 @@ export default async function HistoryPage({
 
     // 全てが空白だった場合を定数に格納
     const isSearchEmpty =
-        trimmedDate === "" &&
+        trimmedStartDate === "" &&
+        trimmedEndDate === "" &&
         trimmedCode === "" &&
         trimmedShelf === "" &&
         trimmedName === "" &&
@@ -54,7 +60,6 @@ export default async function HistoryPage({
         trimmedQuantity === ""
             ? null
             : Number(trimmedQuantity);
-    const isQuantitySearch = trimmedQuantity;
     const isQuantityValid =
         keywordQuantity === null ||
         !Number.isNaN(keywordQuantity);
@@ -81,11 +86,12 @@ export default async function HistoryPage({
             )
             .where(
                 and(
-                    trimmedDate
-                        ? like(
-                            stockHistories.createdAt,
-                            `%${trimmedDate}%`
-                        )
+                    trimmedStartDate
+                        ? sql`date(${stockHistories.createdAt}) >= ${trimmedStartDate}`
+                        : undefined,
+
+                    trimmedEndDate
+                        ? sql`date(${stockHistories.createdAt}) <= ${trimmedEndDate}`
                         : undefined,
                     trimmedCode
                         ? like(
@@ -94,7 +100,7 @@ export default async function HistoryPage({
                         )
                         : undefined,
                     trimmedShelf
-                        ? like(
+                        ? eq(
                             products.shelf,
                             `%${trimmedShelf}%`
                         )
@@ -144,7 +150,8 @@ export default async function HistoryPage({
             <HistorySearchForm
                 action="/history"
                 defaultValues={{
-                    date: trimmedDate,
+                    startDate: trimmedStartDate,
+                    endDate: trimmedEndDate,
                     code: trimmedCode,
                     shelf: trimmedShelf,
                     name: trimmedName,
@@ -177,14 +184,14 @@ export default async function HistoryPage({
                             <tr>
                                 <td
                                     colSpan={8}
-                                    className="text-center p-4"
+                                    className="history-message-cell"
                                 >
                                     検索内容を入力して検索してください
                                 </td>
                             </tr>
                         ) : histories.length === 0 ? (//履歴がなかったら(0)
                             <tr>
-                                <td colSpan={8} className="text-center p-4">
+                                <td colSpan={8} className="history-message-cell">
                                     該当する入出庫履歴がありません
                                 </td>
                             </tr>
@@ -192,7 +199,18 @@ export default async function HistoryPage({
                             histories.map((history) => (
                                 <tr key={history.id}>
                                     <td>
-                                        {history.createdAt}
+                                        {history.createdAt
+                                            ? new Date(history.createdAt).toLocaleString("ja-JP", {
+                                                    timeZone: "Asia/Tokyo",
+                                                    year: "numeric",
+                                                    month: "2-digit",
+                                                    day: "2-digit",
+                                                    hour: "2-digit",
+                                                    minute: "2-digit",
+                                                    second: "2-digit",
+                                                    hour12: false,
+                                                })
+                                            : "未設定"}
                                     </td>
                                     <td>
                                         {history.productCode}
@@ -211,7 +229,7 @@ export default async function HistoryPage({
                                             : history.type === "OUT"
                                                 ? "出庫"
                                                 : history.type === "CHECK"
-                                                    ? "確認"
+                                                    ? "棚卸"
                                                     : "要確認"
                                         }
                                     </td>

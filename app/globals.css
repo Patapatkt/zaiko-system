@@ -259,6 +259,10 @@ body {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
+.search-input-wide {
+  grid-column: span 2;
+}
+
 .search-button {
   flex-shrink: 0;
   white-space: nowrap;
@@ -280,17 +284,6 @@ body {
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 20px;
-}
-
-.history-seacharea{
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 10px;
-    margin-bottom: 24px;
-}
-
-.search-input-wide {
-    grid-column: span 2;
 }
 
 /* ========================================
@@ -342,6 +335,62 @@ body {
   .common-table {
     min-width: 700px;
   }
+}
+
+.history-searcharea {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 320px));
+  gap: 16px 20px;
+  align-items: end;
+}
+
+.history-searcharea .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.history-searcharea .form-input {
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.history-searcharea .form-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.history-wide {
+  grid-column: 1 / -1;
+}
+
+.history-search-actions {
+  grid-column: 1 / -1;
+}
+
+.history-message-cell {
+  padding: 16px;
+  text-align: left;
+}
+
+.history-searcharea > .history-date-range {
+    grid-column: 1 / -1;
+
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.history-date-range > .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
 /* スマホ */
@@ -396,11 +445,47 @@ body {
 }
 
 @media (max-width: 768px) {
-    .history-searcharea {
-        grid-template-columns: 1fr;
+
+  .history-searcharea {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 20px;
+    align-items: end;
+  }
+
+  .history-wide {
+    grid-column: 1/-1;
+  }
+
+  .history-search-actions {
+    grid-column: auto;
+  }
+
+  .history-message-cell {
+    padding: 16px;
+    text-align: left;
+  }
+
+  .history-searcharea > .history-date-range {
+    grid-column: 1 / -1;
+
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.history-date-range > .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.history-search-actions {
+        grid-column: auto;
     }
 
-    .search-input-wide {
-        grid-column: span 1;
+    .history-searcharea .form-input,
+    .history-searcharea .search-button {
+        width: 100%;
+        min-width: 0;
     }
 }
