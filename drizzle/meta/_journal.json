@@ -43,6 +43,13 @@
       "when": 1788057506524,
       "tag": "0005_late_edwin_jarvis",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1788268940142,
+      "tag": "0006_omniscient_deathbird",
+      "breakpoints": true
     }
   ]
 }

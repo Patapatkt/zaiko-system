@@ -1,5 +1,4 @@
 type ProductFormValues = {
-    code: string;
     shelf: string | null;
     name: string;
     specification: string | null;
@@ -7,26 +6,13 @@ type ProductFormValues = {
 
 type ProductFormFieldsProps = {
     defaultValues?: Partial<ProductFormValues>;
-    showCode?: boolean;
 };
 
 export default function ProductFormFields({
     defaultValues = {},
-    showCode = true, //省略された場合は商品コード欄を表示
 }: ProductFormFieldsProps) {
     return (
         <>
-            {showCode && (
-                <div className="form-group">
-                    <label>商品コード</label>
-                    <input
-                        name="code"
-                        defaultValue={defaultValues.code}
-                        className="form-input"
-                        required
-                    />
-                </div>
-            )}
             <div className="form-group">
                 <label>棚番</label>
                 <input

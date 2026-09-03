@@ -1,11 +1,10 @@
 "use client"
-import { checkProductCode, createProduct, restockProduct } from "@/actions/inventory";
+import { checkProduct, createProduct, restockProduct } from "@/actions/inventory";
 import Link from "next/link";
 import { useActionState, useState } from "react";
-import ProductFormFields from "@/components/ProductFormFields";
 
 type CheckResult =
-    Awaited<ReturnType<typeof checkProductCode>>;
+    Awaited<ReturnType<typeof checkProduct>>;
 
 export default function NewProductPage() {
     const [state, formAction, isPending] = useActionState(
@@ -20,30 +19,46 @@ export default function NewProductPage() {
         restockProduct,
         null
     );
-    const [code, setCode] = useState("");
-    const [checkResult, setCheckResult] =
+
+    const [shelf, setShelf] = useState("");
+    const [name, setName] = useState("");
+    const [specification, setSpecification] = useState("");         
+
+    const [checkResult, setCheckResult,] =
         useState<CheckResult | null>(null);
     const [isChecking, setIsChecking] = useState(false);
     const [checkError, setCheckError] = useState("");
 
-    // 商品コード確認ボタンを押したときの処理
-    async function handleCodeCheck() {
+     // 入力内容を変更したら、以前の確認結果を消す
+    function resetCheckResult() {
+        setCheckResult(null);
+        setCheckError("");
+    }
 
+    // 棚番・商品名・仕様を確認する
+    async function handleProductCheck() {
         setIsChecking(true);
         setCheckError("");
 
         try {
-            const result = await checkProductCode(code);
+            const result = await checkProduct(
+                shelf,
+                name,
+                specification
+            );
+
             setCheckResult(result);
         } catch (error) {
-            console.error("商品コード確認エラー:", error);
+            console.error(
+                "商品確認エラー:",
+                error
+            );
 
             setCheckError(
                 error instanceof Error
                     ? error.message
-                    : "商品コードの確認中にエラーが発生しました。"
+                    : "商品の確認中にエラーが発生しました。"
             );
-
         } finally {
             setIsChecking(false);
         }
@@ -56,13 +71,45 @@ export default function NewProductPage() {
             </h1>
 
             <div className="form-group">
-                <label>商品コード</label>
+                <label>棚番</label>
                 <input
                     type="text"
-                    value={code}
+                    value={shelf}
                     onChange={(event) => {
-                        setCode(event.target.value);
-                        setCheckResult(null);
+                        setShelf(event.target.value);
+                        resetCheckResult();
+                    }}
+                    className="form-input"
+                    minLength={6}
+                    maxLength={6}
+                    required
+                />
+            </div>
+
+            <div className="form-group">
+                <label>商品名</label>
+                <input
+                    type="text"
+                    value={name}
+                    onChange={(event) => {
+                        setName(event.target.value);
+                        resetCheckResult();
+                    }}
+                    className="form-input"
+                    required
+                />
+            </div>
+
+            <div className="form-group">
+                <label>商品仕様</label>
+                <input
+                    type="text"
+                    value={specification}
+                    onChange={(event) => {
+                        setSpecification(
+                            event.target.value
+                        );
+                        resetCheckResult();
                     }}
                     className="form-input"
                     required
@@ -71,13 +118,15 @@ export default function NewProductPage() {
 
             <button
                 type="button"
-                onClick={handleCodeCheck}
-                className="button button-success search-button"
+                onClick={handleProductCheck}
+                className={
+                    "button button-success search-button"
+                }
                 disabled={isChecking}
             >
                 {isChecking
                     ? "確認中..."
-                    : "商品コードを確認"}
+                    : "商品を確認"}
             </button>
 
             {checkError && (
@@ -105,21 +154,23 @@ export default function NewProductPage() {
                     </p>
 
                     <p>
-                        商品コード：
-                        {checkResult.product.code}
-                    </p>
-                    <p>
                         棚番：
-                        {checkResult.product.shelf ?? "未設定"}
+                        {checkResult.product.shelf ??
+                            "未設定"}
                     </p>
+
                     <p>
                         商品名：
                         {checkResult.product.name}
                     </p>
+
                     <p>
                         商品仕様：
-                        {checkResult.product.specification ?? "未設定"}
+                        {checkResult.product
+                            .specification ??
+                            "未設定"}
                     </p>
+
                     <p>
                         現在庫：
                         {checkResult.product.stock}
@@ -138,7 +189,9 @@ export default function NewProductPage() {
                         <input
                             type="hidden"
                             name="productId"
-                            value={checkResult.product.id}
+                            value={
+                                checkResult.product.id
+                            }
                         />
 
                         <div className="form-group">
@@ -155,7 +208,9 @@ export default function NewProductPage() {
 
                         <button
                             type="submit"
-                            className="button button-success search-button"
+                            className={
+                                "button button-success search-button"
+                            }
                             disabled={isRestocking}
                         >
                             {isRestocking
@@ -166,12 +221,37 @@ export default function NewProductPage() {
                 </div>
             )}
 
-            {checkResult?.status === "notFound" && (
+            {checkResult?.status ===
+                "notFound" && (
                 <>
                     <p style={{ color: "blue" }}>
-                        この商品コードは未登録です。
+                        一致する商品は未登録です。
                         入力内容を確認し、新商品なら
-                        以下を入力してください。
+                        価格と初回入庫数量を入力してください。
+                    </p>
+
+                    <p>
+                        棚番：
+                        {
+                            checkResult.inputValues
+                                .shelf
+                        }
+                    </p>
+
+                    <p>
+                        商品名：
+                        {
+                            checkResult.inputValues
+                                .name
+                        }
+                    </p>
+
+                    <p>
+                        商品仕様：
+                        {
+                            checkResult.inputValues
+                                .specification
+                        }
                     </p>
 
                     {state?.error && (
@@ -186,11 +266,30 @@ export default function NewProductPage() {
                     >
                         <input
                             type="hidden"
-                            name="code"
-                            value={checkResult.code}
+                            name="shelf"
+                            value={
+                                checkResult.inputValues
+                                    .shelf
+                            }
                         />
 
-                        <ProductFormFields showCode={false} />
+                        <input
+                            type="hidden"
+                            name="name"
+                            value={
+                                checkResult.inputValues
+                                    .name
+                            }
+                        />
+
+                        <input
+                            type="hidden"
+                            name="specification"
+                            value={
+                                checkResult.inputValues
+                                    .specification
+                            }
+                        />
 
                         <div className="form-group">
                             <label>価格</label>
@@ -198,43 +297,49 @@ export default function NewProductPage() {
                                 type="number"
                                 name="price"
                                 className="form-input"
+                                min={0}
+                                step={1}
                                 required
                             />
                         </div>
 
                         <div className="form-group">
-                            <label>初回入庫数量</label>
+                            <label>
+                                初回入庫数量
+                            </label>
                             <input
                                 type="number"
                                 name="stock"
                                 className="form-input"
                                 min={1}
+                                step={1}
                                 required
                             />
                         </div>
 
                         <button
                             type="submit"
-                            className="button button-success search-button"
+                            className={
+                                "button button-success search-button"
+                            }
                             disabled={isPending}
                         >
                             {isPending
                                 ? "入庫中..."
                                 : "新商品を登録して入庫"}
                         </button>
-
                     </form>
                 </>
             )}
 
-
             <Link
                 href="/dashboard"
-                className="button button-secondary"
+                className={
+                    "button button-secondary"
+                }
             >
                 メニュー
             </Link>
-
         </main>
-    )
+    );
 }

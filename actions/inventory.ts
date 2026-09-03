@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "@/db";
-import { products, stockHistories } from "@/db/schema";
-import { eq ,sql} from "drizzle-orm"
+import { products, stockHistories, productCodeSequence } from "@/db/schema";
+import { and, eq, isNull, sql } from "drizzle-orm"
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/utils/auth";
 
@@ -10,7 +10,7 @@ type ProductState = {
     error: string;
 } | null;
 
-type ProductCodeCheckResult =
+type ProductCheckResult =
     | {
         status: "found";
         product: {
@@ -24,7 +24,11 @@ type ProductCodeCheckResult =
     }
     | {
         status: "notFound";
-        code: string;
+        inputValues: {
+            shelf: string;
+            name: string;
+            specification: string;
+        };
     }
     | {
         status: "error";
@@ -33,56 +37,101 @@ type ProductCodeCheckResult =
     | {
         status: "deleted";
         error: string;
-    }
+    };
 
-// 商品コードが登録済みか確認する
-export async function checkProductCode(
-    inputCode: string
-): Promise<ProductCodeCheckResult> {
+// 棚番・商品名・仕様が一致する商品を確認する
+export async function checkProduct(
+    inputShelf: string,
+    inputName: string,
+    inputSpecification: string
+): Promise<ProductCheckResult> {
     await requireAdmin();
-    const code = inputCode.trim();
-    // 商品コードが未入力の場合
-    if (!code) {
+
+    const shelf = inputShelf.trim().toUpperCase();
+    const name = inputName.trim();
+    const specification = inputSpecification.trim();
+
+    // 棚番のガード節
+    if (!shelf || shelf.length !== 6) {
         return {
             status: "error",
-            error: "商品コードを入力してください。",
+            error:
+                "棚番が未入力か桁数が違います。棚番を6桁で入力してください。",
         };
     }
 
-    // 商品コードが一致する商品を検索
+    // 商品名のガード節
+    if (!name) {
+        return {
+            status: "error",
+            error: "商品名を入力してください。",
+        };
+    }
+
+    // 仕様のガード節
+    if (!specification) {
+        return {
+            status: "error",
+            error: "仕様を入力してください。",
+        };
+    }
+
+    // 削除されていない商品から、3項目が一致する商品を検索
     const product = await db.query.products.findFirst({
-        where: eq(products.code, code),
+        where: and(
+            eq(products.shelf, shelf),
+            eq(products.name, name),
+            eq(products.specification, specification),
+            isNull(products.deletedAt)
+        ),
     });
 
-    // 商品コードが登録されていない場合
-    if (!product) {
+    // 登録済みの商品だった場合
+    if (product) {
         return {
-            status: "notFound",
-            code,
+            status: "found",
+            product: {
+                id: product.id,
+                code: product.code,
+                shelf: product.shelf,
+                name: product.name,
+                specification: product.specification,
+                stock: product.stock,
+            },
         };
     }
 
-    // 過去に削除された商品だった場合
-    if (product.deletedAt) {
+    // 同じ3項目の削除済み商品が存在するか確認
+    const deletedProduct =
+        await db.query.products.findFirst({
+            where: and(
+                eq(products.shelf, shelf),
+                eq(products.name, name),
+                eq(
+                    products.specification,
+                    specification
+                )
+            ),
+        });
+
+    if (deletedProduct?.deletedAt) {
         return {
             status: "deleted",
             error:
-                "この商品コードは削除済みの商品に使用されています。管理者に確認してください。",
+                "同じ棚番・商品名・仕様の削除済み商品があります。管理者に確認してください。",
         };
     }
-    // 登録済みの商品だった場合
+
+    // 一致する商品が存在しない場合
     return {
-        status: "found",
-        product: {
-            id: product.id,
-            code: product.code,
-            shelf: product.shelf,
-            name: product.name,
-            specification: product.specification,
-            stock: product.stock,
+        status: "notFound",
+        inputValues: {
+            shelf,
+            name,
+            specification,
         },
     };
-};
+}
 
 // 登録済み商品を入庫する
 export async function restockProduct(
@@ -97,7 +146,7 @@ export async function restockProduct(
     // 商品IDのガード節
     if (!Number.isInteger(productId) || productId <= 0) {
         return {
-            error: "商品情報が正しくありません。商品コードを再確認してください。",
+            error: "商品情報が正しくありません。商品を再確認してください。",
         };
     }
 
@@ -151,43 +200,14 @@ export async function createProduct(
 ): Promise<ProductState> {
     await requireAdmin();
 
-    const code =
-        (formData.get("code") as string)?.trim();
     const shelf =
-        (formData.get("shelf") as string)?.trim();
+        (formData.get("shelf") as string)?.trim().toUpperCase();
     const specification =
         (formData.get("specification") as string)?.trim();
     const name =
         (formData.get("name") as string)?.trim();
     const price = Number(formData.get("price"));
     const stock = Number(formData.get("stock"));
-
-    // 商品コードのガード節
-    if (!code) {
-        return {
-            error: "商品コードを入力してください。",
-        };
-    }
-
-    // 登録処理の直前に商品コードを再確認
-    const existingProduct =
-        await db.query.products.findFirst({
-            where: eq(products.code, code),
-        });
-
-    if (existingProduct?.deletedAt) {
-        return {
-            error:
-                "この商品コードは削除済みの商品に使用されています。管理者に確認してください。",
-        };
-    }
-
-    if (existingProduct) {
-        return {
-            error:
-                "この商品コードは既に登録されています。商品コードを再確認してください。",
-        };
-    }
 
     // 棚番のガード節
     if (!shelf || shelf.length !== 6) {
@@ -227,51 +247,73 @@ export async function createProduct(
         };
     }
 
-    const wasCreated =
-        await db.transaction(async (tx) => {
-            /*
-             * 確認後に別ユーザーが同じコードを登録しても、
-             * uniqueエラーをそのまま発生させず登録を中止する
-             */
-            const [product] = await tx
-                .insert(products)
-                .values({
-                    code,
-                    shelf,
-                    name,
-                    price,
-                    stock,
-                    specification,
-                })
-                .onConflictDoNothing({
-                    target: products.code,
-                })
-                .returning({
-                    id: products.id,
-                });
+     // 同じ棚番・商品名・仕様の商品がないか再確認
+    const existingProduct = 
+        await db.query.products.findFirst({
+            where: and(
+                eq(products.shelf, shelf),
+                eq(products.name, name),
+                eq(products.specification, specification)
+            )
+        });            
 
-            // 同じ商品コードが先に登録された場合
-            if (!product) {
-                return false;
-            }
-
-            // 新商品登録を初回入庫として履歴へ保存
-            await tx.insert(stockHistories).values({
-                productId: product.id,
-                quantity: stock,
-                type: "IN",
-                memo: "商品登録時の初回在庫",
-            });
-
-            return true;
-        });
-
-    if (!wasCreated) {
+    if (existingProduct) {
         return {
-            error:
-                "同じ商品コードが先に登録されました。商品コードをもう一度確認してください。",
+            error: "同じ棚番・商品名・仕様の商品は既に登録されています。もう一度商品を確認してください。",
         };
     }
+
+    await db.transaction(async (tx) => {
+        const [productCodeSeq] = await tx
+            .update(productCodeSequence)
+            .set({
+                currentNumber:
+                    sql`${productCodeSequence.currentNumber} + 1`,
+            })
+            .where(
+                eq(productCodeSequence.id, 1)
+            )
+            .returning({
+                currentNumber: productCodeSequence.currentNumber,
+            });
+
+        if (!productCodeSeq) {
+            throw new Error(
+                "商品コード採番テーブルの更新に失敗しました。"
+            );
+        }
+
+        const code =
+            `P${String(productCodeSeq.currentNumber)
+                .padStart(6, "0")}`;
+        /*
+         * 確認後に別ユーザーが同じコードを登録しても、
+         * uniqueエラーをそのまま発生させず登録を中止する
+         */
+        const [product] = await tx
+            .insert(products)
+            .values({
+                code,
+                shelf,
+                name,
+                price,
+                stock,
+                specification,
+            })
+
+            .returning({
+                id: products.id,
+            });
+
+        // 新商品登録を初回入庫として履歴へ保存
+        await tx.insert(stockHistories).values({
+            productId: product.id,
+            quantity: stock,
+            type: "IN",
+            memo: "商品登録時の初回在庫",
+        });
+
+    });
 
     redirect("/inventory/new?success=created");
 }
@@ -282,9 +324,8 @@ export async function updateProduct(
     formData: FormData
 ) {
     await requireAdmin();
-    const code = formData.get("code") as string;
     const shelf =
-        (formData.get("shelf") as string)?.trim();
+        (formData.get("shelf") as string)?.trim().toUpperCase();
     const name = formData.get("name") as string;
     const specification =
         (formData.get("specification") as string)?.trim();
@@ -305,7 +346,6 @@ export async function updateProduct(
     await db
         .update(products)
         .set({
-            code,
             shelf,
             name,
             specification,

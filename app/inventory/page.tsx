@@ -116,7 +116,7 @@ export default async function InventoryPage(
                                 <td
 
                                     colSpan={6}
-                                    className="text-center p-4"
+                                    className="text-aliment-left p-4"
                                 >
                                     棚番・商品名・仕様を入力して検索してください
                                 </td>
@@ -124,7 +124,7 @@ export default async function InventoryPage(
                         ) :
                             productList.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="text-center p-4">
+                                    <td colSpan={6} className="text-aliment-left p-4">
                                         該当する商品はありません
                                     </td>
                                 </tr>

@@ -39,7 +39,7 @@ export default function EditProductForm({
 
             <ProductFormFields
                 defaultValues={{
-                    code: product.code,
+                    
                     shelf: product.shelf ?? "",
                     name: product.name,
                     specification: product.specification ?? "",

@@ -47,7 +47,7 @@ export const products = sqliteTable("products", {
   shelf: text("shelf"),//⇐棚番追加26/8/23
   code: text("code")
     .notNull()
-    .unique(),
+    .unique(),//「この列には同じ値を2つ登録してはいけません」というdbのルール
   name: text("name")
     .notNull(),
   price: integer("price")
@@ -93,3 +93,11 @@ export const stockHistories = sqliteTable("stock_histories", {
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 });
+
+export const productCodeSequence = sqliteTable(
+  "product_code_sequence", 
+  {
+    id: integer("id").primaryKey(),//採番テーブル自身の行を識別するID
+    currentNumber: integer("current_number").notNull(),//商品コードを作るためのカウンター
+  }
+);
