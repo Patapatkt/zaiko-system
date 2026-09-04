@@ -13,7 +13,6 @@ import { cookies } from "next/headers";//cookiesへアクセスできるよう�
 import { redirect } from "next/navigation";//認証成功画面へアクセスできるようにする
 
 import bcrypt from "bcryptjs";//ハッシュ化の比較の為にbcryptを使えるようにする
-import { error } from "console";
 
 export async function login(
     prevState:unknown,
@@ -25,6 +24,7 @@ export async function login(
     const user = await db.query.users.findFirst({//メールアドレスに一致したユーザーを取得
         where: eq(users.email, email),//emailが一致しているユーザーを探す
     });
+
     // メールアドレスが存在しているか確認
     if (!user) {
         return{

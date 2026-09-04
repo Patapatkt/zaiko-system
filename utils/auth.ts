@@ -24,3 +24,24 @@ export async function requireAdmin() {
 
     return user;
 }
+
+// 承認済みユーザーか確認する
+export async function requireApprovedUser() {
+    const session = await getSession();
+
+    // ログインしていなければログイン画面へ
+    if (!session) {
+        redirect("/login");
+    }
+
+    // ログイン中のユーザーを取得
+    const user = await db.query.users.findFirst({
+        where: eq(users.id, session.userId),
+    });
+
+    // ユーザーが存在しなければログイン画面へ
+    if (!user) {
+        redirect("/login");
+    }
+    return user;
+}

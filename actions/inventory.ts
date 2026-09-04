@@ -4,7 +4,7 @@ import { db } from "@/db";
 import { products, stockHistories, productCodeSequence } from "@/db/schema";
 import { and, eq, isNull, sql } from "drizzle-orm"
 import { redirect } from "next/navigation";
-import { requireAdmin } from "@/utils/auth";
+import { requireAdmin,requireApprovedUser } from "@/utils/auth";
 
 type ProductState = {
     error: string;
@@ -45,7 +45,7 @@ export async function checkProduct(
     inputName: string,
     inputSpecification: string
 ): Promise<ProductCheckResult> {
-    await requireAdmin();
+    await requireApprovedUser();
 
     const shelf = inputShelf.trim().toUpperCase();
     const name = inputName.trim();
@@ -138,7 +138,7 @@ export async function restockProduct(
     previousState: ProductState,
     formData: FormData
 ): Promise<ProductState> {
-    await requireAdmin();
+    await requireApprovedUser();//承認済ユーザーか確認
 
     const productId = Number(formData.get("productId"));
     const quantity = Number(formData.get("quantity"));
@@ -198,7 +198,7 @@ export async function createProduct(
     previousState: ProductState,
     formData: FormData
 ): Promise<ProductState> {
-    await requireAdmin();
+    await requireApprovedUser();
 
     const shelf =
         (formData.get("shelf") as string)?.trim().toUpperCase();
