@@ -163,7 +163,7 @@ export default async function HistoryPage({
             />
 
             <div className="table-wrapper">
-                <table className="common-table">
+                <table className="common-table  history-table">
                     <thead>
                         <tr>
                             <th>日時</th>

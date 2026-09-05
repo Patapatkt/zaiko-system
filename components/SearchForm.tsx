@@ -18,30 +18,47 @@ export default function SearchForm({
             action={action}
             className="searcharea"
         >
-            <input
-                type="text"
-                name="shelf"
-                placeholder={"棚番"}
-                defaultValue={shelf}
-                className="search-input"
-            />
+            <div className="search-field">
+                <label>棚番</label>
+                <input
+                    type="text"
+                    name="shelf"
+                    placeholder="例:A12345"
+                    defaultValue={shelf}
+                    className="search-input"
+                />
+                <p className="form-help">
+                    6桁の半角英数字を入力
+                </p>
+            </div>
 
-            <input
-                type="text"
-                name="name"
-                placeholder={"商品名"}
-                defaultValue={name}
-                className="search-input"
-            />
+            <div className="search-field">
+                <label>商品名</label>
+                <input
+                    type="text"
+                    name="name"
+                    placeholder="例:りんご"
+                    defaultValue={name}
+                    className="search-input"
+                />
+                <p className="form-help">
+                    全角で商品名を入力
+                </p>
+            </div>
 
-            <input
-                type="text"
-                name="specification"
-                placeholder={"仕様"}
-                defaultValue={specification}
-                className="search-input"
-            />
-
+            <div className="search-field">
+                <label>仕様</label>
+                <input
+                    type="text"
+                    name="specification"
+                    placeholder="例:国産品"
+                    defaultValue={specification}
+                    className="search-input"
+                />
+                <p className="form-help">
+                    全角で仕様を入力
+                </p>
+            </div>
 
             <button type="submit"
                 className="button button-success search-button"

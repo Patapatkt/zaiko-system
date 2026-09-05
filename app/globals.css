@@ -1,16 +1,22 @@
 @import "tailwindcss";
 
+/* ========================================
+   1. 全体・基本設定
+======================================== */
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
 }
 
-/* @media (prefers-color-scheme: dark) {
+/*
+@media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
-} */
+}
+*/
 
 body {
   background: var(--background);
@@ -18,96 +24,10 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.auth-title {
-  margin-bottom: 24px;
-  font-size: 28px;
-  font-weight: bold;
-  text-align: center;
-}
 
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: bold;
-}
-
-.form-input {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  font-size: 16px;
-  box-sizing: border-box;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-}
-
-.auth-link {
-  display: block;
-  margin-top: 18px;
-  text-align: center;
-  color: #2563eb;
-  text-decoration: none;
-}
-
-.auth-link:hover {
-  text-decoration: underline;
-}
-
-.auth-error {
-  margin-bottom: 16px;
-  padding: 10px;
-  border-radius: 6px;
-  background: #fee2e2;
-  color: #b91c1c;
-  font-size: 16px;
-}
-
-.auth-page {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #f5f5f5;
-}
-
-.auth-card {
-  width: 420px;
-  background: white;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, .1);
-}
-
-.auth-button {
-  width: 100%;
-  padding: 12px;
-  margin-top: 10px;
-  background: gray;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 18px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.auth-button:hover {
-  background: #1d4ed8;
-}
-
-.menu {
-  background-color: gray;
-}
+/* ========================================
+   2. 共通ページレイアウト
+======================================== */
 
 .page-container {
   width: 100%;
@@ -138,50 +58,107 @@ body {
   flex-wrap: wrap;
 }
 
-.common-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 16px;
-  margin-bottom: 24px;
+
+/* ========================================
+   3. 共通フォーム
+======================================== */
+
+.form-group {
+  margin-bottom: 20px;
 }
 
-.common-table th {
-  border: 1px solid #9ca3af;
-  background-color: #e5e7eb;
-  color: #111827;
-  padding: 14px 16px;
-  text-align: center;
+.form-label {
+  display: block;
+  margin-bottom: 8px;
   font-weight: bold;
 }
 
-.common-table td {
-  border: 1px solid #9ca3af;
-  background-color: white;
-  padding: 14px 16px;
-  vertical-align: middle;
+.form-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 16px;
+  box-sizing: border-box;
 }
 
-.danger-link {
-  color: #dc2626;
-  text-decoration: underline;
-  cursor: pointer;
+.form-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
-.danger-link:hover {
-  color: #991b1b;
-}
-
-.edit-link {
-  color: #2563eb;
-  text-decoration: underline;
-}
-
-.edit-link:hover {
-  color: #1d4ed8;
-}
 
 /* ========================================
-   共通ボタン
+   4. 認証画面
+   login / register
+======================================== */
+
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f5f5f5;
+}
+
+.auth-card {
+  width: 420px;
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.auth-title {
+  margin-bottom: 24px;
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.auth-link {
+  display: block;
+  margin-top: 18px;
+  text-align: center;
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.auth-link:hover {
+  text-decoration: underline;
+}
+
+.auth-error {
+  margin-bottom: 16px;
+  padding: 10px;
+  border-radius: 6px;
+  background: #fee2e2;
+  color: #b91c1c;
+  font-size: 16px;
+}
+
+.auth-button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  background: gray;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.auth-button:hover {
+  background: #1d4ed8;
+}
+
+
+/* ========================================
+   5. 共通ボタン
 ======================================== */
 
 .button {
@@ -221,30 +198,51 @@ body {
 }
 
 .button-secondary {
+  margin-top: 20px;
   border: 1px solid #64748b;
   background-color: gray;
   color: black;
-  margin-top: 20px;
 }
 
 .button-secondary:hover {
   background-color: gray;
 }
 
+.menu {
+  background-color: gray;
+}
+
+
 /* ========================================
-   共通検索エリア
+   6. 共通検索エリア
 ======================================== */
 
-.search-area {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.searcharea {
+  display: grid;
+  grid-template-columns:
+    minmax(160px, 0.8fr)
+    minmax(220px, 1fr)
+    minmax(220px, 1fr)
+    auto;
+  gap: 12px;
+  align-items: end;
   margin-bottom: 24px;
 }
 
+/* 1つの検索項目 */
+.search-field {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 検索項目ラベル */
+.search-field label {
+  margin-bottom: 4px;
+}
+
+/* 検索入力欄 */
 .search-input {
   width: 100%;
-  max-width: 420px;
   min-height: 42px;
   padding: 10px 12px;
   border: 1px solid #cbd5e1;
@@ -259,15 +257,89 @@ body {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
+/* 必要な画面だけ幅広にする */
 .search-input-wide {
   grid-column: span 2;
 }
 
+/* 入力ルール */
+.form-help {
+  margin: 4px 0 0;
+  min-height: 1.2em;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* 検索ボタン */
 .search-button {
+  align-self: center;
   flex-shrink: 0;
   white-space: nowrap;
-  margin: 10px;
+  margin: 0;
 }
+
+
+/* ========================================
+   7. 共通テーブル
+======================================== */
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.common-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+  margin-bottom: 24px;
+}
+
+.common-table th {
+  border: 1px solid #9ca3af;
+  background-color: #e5e7eb;
+  color: #111827;
+  padding: 14px 16px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.common-table td {
+  border: 1px solid #9ca3af;
+  background-color: white;
+  padding: 14px 16px;
+  vertical-align: middle;
+}
+
+
+/* ========================================
+   8. 共通リンク
+======================================== */
+
+.danger-link {
+  color: #dc2626;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.danger-link:hover {
+  color: #991b1b;
+}
+
+.edit-link {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.edit-link:hover {
+  color: #1d4ed8;
+}
+
+
+/* ========================================
+   9. メッセージ・商品情報
+======================================== */
 
 .success-message {
   color: #166534;
@@ -286,56 +358,10 @@ body {
   margin-bottom: 20px;
 }
 
+
 /* ========================================
-   レスポンシブ対応
+   10. 入出庫履歴検索
 ======================================== */
-
-/* タブレット・スマホでテーブルを横スクロール可能にする */
-.table-wrapper {
-  width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* タブレット以下 */
-@media (max-width: 768px) {
-  .page-container {
-    padding: 24px 16px;
-  }
-
-  .page-header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 16px;
-  }
-
-  .page-title {
-    font-size: 32px;
-  }
-
-  .header-actions {
-    width: 100%;
-    gap: 10px;
-  }
-
-  .search-area {
-    align-items: stretch;
-  }
-
-  .search-input {
-    max-width: none;
-  }
-
-  .auth-card {
-    width: calc(100% - 32px);
-    max-width: 420px;
-    padding: 32px 24px;
-  }
-
-  .common-table {
-    min-width: 700px;
-  }
-}
 
 .history-searcharea {
   display: grid;
@@ -380,20 +406,135 @@ body {
 }
 
 .history-searcharea > .history-date-range {
-    grid-column: 1 / -1;
-
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 20px;
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
 }
 
 .history-date-range > .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-/* スマホ */
+.history-table th:nth-child(1),
+.history-table td:nth-child(1) {
+  width: 160px;
+}
+
+.history-table th:nth-child(2),
+.history-table td:nth-child(2) {
+  width: 110px;
+}
+
+.history-table th:nth-child(3),
+.history-table td:nth-child(3) {
+  width: 100px;
+}
+
+.history-table th:nth-child(4),
+.history-table td:nth-child(4) {
+  width: 140px;
+}
+
+.history-table th:nth-child(5),
+.history-table td:nth-child(5) {
+  width: 140px;
+}
+
+.history-table th:nth-child(6),
+.history-table td:nth-child(6) {
+  width: 80px;
+}
+
+.history-table th:nth-child(7),
+.history-table td:nth-child(7) {
+  width: 80px;
+}
+
+.history-table th:nth-child(8),
+.history-table td:nth-child(8) {
+  width: 180px;
+}
+
+/* ========================================
+   11. タブレット対応
+======================================== */
+
+@media (max-width: 768px) {
+  .page-container {
+    padding: 24px 16px;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .page-title {
+    font-size: 32px;
+  }
+
+  .header-actions {
+    width: 100%;
+    gap: 10px;
+  }
+
+  .auth-card {
+    width: calc(100% - 32px);
+    max-width: 420px;
+    padding: 32px 24px;
+  }
+
+  .common-table {
+    min-width: 700px;
+  }
+
+  /* 共通検索 */
+  .searcharea {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+  }
+
+  .search-input {
+    max-width: none;
+  }
+
+  /* 履歴検索 */
+  .history-searcharea {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 20px;
+    align-items: end;
+  }
+
+  .history-wide {
+    grid-column: 1 / -1;
+  }
+
+  .history-search-actions {
+    grid-column: auto;
+  }
+
+  .history-searcharea > .history-date-range {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+
+  .history-searcharea .form-input,
+  .history-searcharea .search-button {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+
+/* ========================================
+   12. スマホ対応
+======================================== */
+
 @media (max-width: 480px) {
   .page-container {
     padding: 20px 12px;
@@ -414,13 +555,12 @@ body {
     width: 100%;
   }
 
-  .search-area {
-    flex-direction: column;
+  .searcharea {
+    grid-template-columns: 1fr;
   }
 
   .search-button {
     width: 100%;
-    margin: 0;
   }
 
   .button {
@@ -442,50 +582,4 @@ body {
     padding: 10px 12px;
     white-space: nowrap;
   }
-}
-
-@media (max-width: 768px) {
-
-  .history-searcharea {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px 20px;
-    align-items: end;
-  }
-
-  .history-wide {
-    grid-column: 1/-1;
-  }
-
-  .history-search-actions {
-    grid-column: auto;
-  }
-
-  .history-message-cell {
-    padding: 16px;
-    text-align: left;
-  }
-
-  .history-searcharea > .history-date-range {
-    grid-column: 1 / -1;
-
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 20px;
-}
-
-.history-date-range > .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-.history-search-actions {
-        grid-column: auto;
-    }
-
-    .history-searcharea .form-input,
-    .history-searcharea .search-button {
-        width: 100%;
-        min-width: 0;
-    }
 }

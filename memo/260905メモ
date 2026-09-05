@@ -6,3 +6,20 @@ Client Component本体を async function にしてはいけない
 Server Component本体 → async OK
 Client Component本体 → async NG
 Client Component内のイベント等 → async OK
+
+____________________________________________________
+GIT HUB 登録手順
+npm run build　動作可能か検査
+↓
+git status　変更ファイル確認
+↓
+git diff　変更内容(差分)確認
+↓
+git add .　今回記録する変更を選ぶ
+↓
+git commit　変更をローカルGitへ記録
+↓
+git push　GitHubへ送る
+
+
+
