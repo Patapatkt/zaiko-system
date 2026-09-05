@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import { login } from "@/actions/auth";
 import Link from "next/link";
 
-export default async function form() {
+export default function Form() {
     const [state, formAction] = useActionState(
         login,
         null

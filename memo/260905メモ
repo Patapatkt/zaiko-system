@@ -1,0 +1,8 @@
+Componentでは非同期は使ってはいけない
+Client Component本体を async function にしてはいけない
+ただしClient Componentの中で非同期処理を呼ぶことはできる。
+
+一覧
+Server Component本体 → async OK
+Client Component本体 → async NG
+Client Component内のイベント等 → async OK
