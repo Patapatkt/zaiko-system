@@ -136,7 +136,7 @@ export default function HistorySearchForm({
                     defaultValue={defaultValues.memo ?? ""}
                     className="form-input form"
                 />
-                <p>理由は全角で入力してください</p>
+                <p className="form-help">理由は全角で入力してください</p>
             </div>
 
             <button
