@@ -176,13 +176,12 @@ export default async function InventoryPage(
                 >
                     履歴画面
                 </Link>
+
+                <Link href="/dashboard"
+                    className="button button-secondary">
+                    メニュー
+                </Link>
             </div>
-
-            <Link href="/dashboard"
-                className="button button-secondary">
-                メニュー
-            </Link>
-
         </main>
     )
 }

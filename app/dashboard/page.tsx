@@ -56,7 +56,7 @@ export default async function Home() {
           )}
           <Link
             href="/history"
-            className="bg-blue-500 hover:bg-blue-600 text-2xl text-center font-bold  px-6 py-4 rounded-lg"
+            className="bg-blue-500 hover:bg-blue-600 text-2xl text-center font-bold  px-4 py-6 rounded-lg"
           >
             入出庫履歴
           </Link>

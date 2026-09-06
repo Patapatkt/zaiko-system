@@ -55,7 +55,7 @@ body {
   display: flex;
   align-items: center;
   gap: 20px;
-  flex-wrap: wrap;
+  margin-top: 20px;
 }
 
 
@@ -88,6 +88,12 @@ body {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
+.form-action {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
 
 /* ========================================
    4. 認証画面
@@ -191,6 +197,7 @@ body {
 .button-success {
   background-color: #00c968;
   color: black;
+  margin-right: 12px;
 }
 
 .button-success:hover {
@@ -198,7 +205,6 @@ body {
 }
 
 .button-secondary {
-  margin-top: 20px;
   border: 1px solid #64748b;
   background-color: gray;
   color: black;
@@ -275,7 +281,7 @@ body {
   align-self: center;
   flex-shrink: 0;
   white-space: nowrap;
-  margin: 0;
+  margin-right: 12px ;
 }
 
 
@@ -365,9 +371,9 @@ body {
 
 .history-searcharea {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 320px));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px 20px;
-  align-items: end;
+  align-items: start;
 }
 
 .history-searcharea .form-group {
@@ -425,7 +431,7 @@ body {
 
 .history-table th:nth-child(2),
 .history-table td:nth-child(2) {
-  width: 110px;
+  width: 130px;
 }
 
 .history-table th:nth-child(3),
@@ -456,6 +462,12 @@ body {
 .history-table th:nth-child(8),
 .history-table td:nth-child(8) {
   width: 180px;
+}
+
+.history-searcharea .search-button {
+  align-self: start;
+  margin-top: 28px;
+  background-color: #00c968;
 }
 
 /* ========================================
@@ -523,7 +535,6 @@ body {
     gap: 20px;
   }
 
-  .history-searcharea .form-input,
   .history-searcharea .search-button {
     width: 100%;
     min-width: 0;
@@ -582,4 +593,36 @@ body {
     padding: 10px 12px;
     white-space: nowrap;
   }
+
+  .button{
+    width: 100%;
+  }
+
+  .history-searcharea {
+    grid-template-columns: 1fr;
+  }
+
+  .history-searcharea > .history-date-range {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+/* ========================================
+   13. 専用フォーム
+======================================== */
+
+/* 商品登録・商品入庫フォーム */
+.product-form {
+  width: 100%;
+  max-width: 760px;
+  gap: 10px;
+}
+
+.product-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 24px;
+  margin-top: 20px;
 }
