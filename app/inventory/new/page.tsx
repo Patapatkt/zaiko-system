@@ -1,7 +1,9 @@
 "use client"
 import { checkProduct, createProduct, restockProduct } from "@/actions/inventory";
+import ProductCheckForm from "@/components/ProductCheckForm";
 import Link from "next/link";
 import { useActionState, useState } from "react";
+import ExistingProductRestockForm from "@/components/ExistingProductRestockForm";
 
 type CheckResult =
     Awaited<ReturnType<typeof checkProduct>>;
@@ -69,59 +71,17 @@ export default function NewProductPage() {
             <h1 className="page-title">
                 商品入庫
             </h1>
-            <div className="product-form">
-                <div className="form-group">
-                    <label>棚番</label>
-                    <input
-                        type="text"
-                        value={shelf}
-                        onChange={(event) => {
-                            setShelf(event.target.value);
-                            resetCheckResult();
-                        }}
-                        placeholder="例: A12345"
-                        className="form-input"
-                        minLength={6}
-                        maxLength={6}
-                        required
-                    />
-                    <p>6文字の棚番を半角英数字で入力してください</p>
-                </div>
 
-                <div className="form-group">
-                    <label>商品名</label>
-                    <input
-                        type="text"
-                        value={name}
-                        onChange={(event) => {
-                            setName(event.target.value);
-                            resetCheckResult();
-                        }}
-                        placeholder="例: りんご"
-                        className="form-input"
-                        required
-                    />
-                    <p>商品名を全角で入力してください</p>
-                </div>
+            <ProductCheckForm
+                shelf={shelf}
+                setShelf={setShelf}
+                name={name}
+                setName={setName}
+                specification={specification}
+                setSpecification={setSpecification}
+                resetCheckResult={resetCheckResult}
+            />
 
-                <div className="form-group">
-                    <label>商品仕様</label>
-                    <input
-                        type="text"
-                        value={specification}
-                        onChange={(event) => {
-                            setSpecification(
-                                event.target.value
-                            );
-                            resetCheckResult();
-                        }}
-                        placeholder="例: 国産品"
-                        className="form-input"
-                        required
-                    />
-                    <p>商品仕様を全角で入力してください</p>
-                </div>
-            </div>
             <div className="product-actions">
                 <button
                     type="button"
@@ -155,67 +115,68 @@ export default function NewProductPage() {
                 )}
 
                 {checkResult?.status === "found" && (
-                    <div>
-                        <p style={{ color: "green" }}>
-                            登録済みの商品です。
-                        </p>
+                    <ExistingProductRestockForm
+                        product={checkResult.product}
+                        isRestocking={isRestocking}
+                        restockAction={restockAction}
+                        restockState={restockState}
+                    />
+                )}
+                    {/* {/* //     <p>
+                    //         棚番：
+                    //         {checkResult.product.shelf ??
+                    //             "未設定"}
+                    //     </p>
 
-                        <p>
-                            棚番：
-                            {checkResult.product.shelf ??
-                                "未設定"}
-                        </p>
+                    //     <p>
+                    //         商品名：
+                    //         {checkResult.product.name}
+                    //     </p>
 
-                        <p>
-                            商品名：
-                            {checkResult.product.name}
-                        </p>
+                    //     <p>
+                    //         商品仕様：
+                    //         {checkResult.product
+                    //             .specification ??
+                    //             "未設定"}
+                    //     </p>
 
-                        <p>
-                            商品仕様：
-                            {checkResult.product
-                                .specification ??
-                                "未設定"}
-                        </p>
+                    //     <p>
+                    //         現在庫：
+                    //         {checkResult.product.stock}
+                    //     </p>
 
-                        <p>
-                            現在庫：
-                            {checkResult.product.stock}
-                        </p>
+                    //     {restockState?.error && (
+                    //         <p style={{ color: "red" }}>
+                    //             {restockState.error}
+                    //         </p>
+                    //     )}
 
-                        {restockState?.error && (
-                            <p style={{ color: "red" }}>
-                                {restockState.error}
-                            </p>
-                        )}
+                    //     <form
+                    //         action={restockAction}
+                    //         className="space-y-4"
+                    //     >
+                    //         <input
+                    //             type="hidden"
+                    //             name="productId"
+                    //             value={
+                    //                 checkResult.product.id
+                    //             }
+                    //         />
 
-                        <form
-                            action={restockAction}
-                            className="space-y-4"
-                        >
-                            <input
-                                type="hidden"
-                                name="productId"
-                                value={
-                                    checkResult.product.id
-                                }
-                            />
-
-                            <div className="form-group">
-                                <label>入庫数量</label>
-                                <input
-                                    type="number"
-                                    name="quantity"
-                                    placeholder="入庫数量を入力"
-                                    className="form-input"
-                                    min={1}
-                                    step={1}
-                                    required
-                                />
-                                <p>0以上の数字を入力してください</p>
-                            </div>
-
-                            <button
+                    //         <div className="form-group">
+                    //             <label>入庫数量</label>
+                    //             <input
+                    //                 type="number"
+                    //                 name="quantity"
+                    //                 placeholder="入庫数量を入力"
+                    //                 className="form-input"
+                    //                 min={1}
+                    //                 step={1}
+                    //                 required
+                    //             />
+                                // <p>0以上の数字を入力してください</p>
+    // *} */}
+                            {/* <button
                                 type="submit"
                                 className={
                                     "button button-success search-button"
@@ -225,11 +186,8 @@ export default function NewProductPage() {
                                 {isRestocking
                                     ? "入庫中..."
                                     : "入庫する"}
-                            </button>
-                        </form>
-                    </div>
-                )}
-
+                            </button> */}
+                    
                 {checkResult?.status ===
                     "notFound" && (
                         <>
