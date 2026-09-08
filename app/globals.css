@@ -95,6 +95,30 @@ body {
   margin-top: 20px;
 }
 
+.restock-form {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.restock-form .form-group {
+    margin-bottom: 0;
+}
+
+.restock-form .button {
+    flex-shrink: 0;
+    margin-top: 25px;
+}
+
+.restock-form .form-group {
+    margin-bottom: 0;
+}
+
+.restock-form .button {
+    flex-shrink: 0;
+}
+
+
 /* ========================================
    4. 認証画面
    login / register

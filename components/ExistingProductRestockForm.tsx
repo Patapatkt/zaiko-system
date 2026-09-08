@@ -66,7 +66,7 @@ export default function ExistingProductRestockForm({
 
             <form
                 action={restockAction}
-                className="space-y-4"
+                className="restock-form"
             >
                 <input
                     type="hidden"
@@ -92,7 +92,7 @@ export default function ExistingProductRestockForm({
 
                 <button
                     type="submit"
-                    className="button button-success search-button"
+                    className="button button-success"
                     disabled={isRestocking}
                 >
                     {isRestocking
