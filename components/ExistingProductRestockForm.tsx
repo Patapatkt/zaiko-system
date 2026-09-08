@@ -92,7 +92,7 @@ export default function ExistingProductRestockForm({
 
                 <button
                     type="submit"
-                    className="button-success search-button"
+                    className="button button-success search-button"
                     disabled={isRestocking}
                 >
                     {isRestocking
