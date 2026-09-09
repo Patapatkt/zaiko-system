@@ -30,7 +30,7 @@ export default function ExistingProductRestockForm({
     restockState,//入庫処理の結果・エラー情報
 }: ExistingProductRestockFormProps) {
     return (
-        <div>
+        <div className="existing-product-restock">
             <p style={{ color: "green" }}>
                 登録済みの商品です。
             </p>
