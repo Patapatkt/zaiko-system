@@ -84,9 +84,23 @@ export default function NewProductPage() {
                 商品入庫
             </h1>
 
-            <ProductQrScanner
-                onRead={handleQrRead}
-            />
+            <div className="qr-input-area">
+                <h2 className="qr-method-title">
+                    QRコードを読み取る
+                </h2>
+
+                <ProductQrScanner
+                    onRead={handleQrRead}
+                />
+
+                <p className="qr-form-help">
+                    読み取らない場合は、下の入力欄に手動入力
+                </p>
+            </div>
+
+            <div className="input-method-divider">
+                <span>または手入力</span>
+            </div>
 
             <ProductCheckForm
                 shelf={shelf}

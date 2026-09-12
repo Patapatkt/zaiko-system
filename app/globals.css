@@ -652,6 +652,18 @@ body {
     align-self: stretch;
   }
 
+  .qr-input-area {
+    padding: 12px;
+  }
+
+  .qr-scanner .button {
+    width: 100%;
+  }
+
+  #product-qr-reader {
+    max-width: 100%;
+  }
+
 }
 
 /* ========================================
@@ -671,4 +683,69 @@ body {
   align-items: flex-start;
   gap: 16px;
   margin-top: 20px;
+}
+
+/* QRコード読み取りフォーム */
+.qr-input-area {
+  width: 100%;
+  padding: 16px;
+  margin-top: 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: #f8fafc;
+}
+
+.qr-method-title {
+  width: 100%;
+  margin: 0 0 12px;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.qr-scanner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.qr-form-help{
+  text-align: center;
+  width: 100%;
+  margin: 12px 0 0;
+}
+
+#product-qr-reader {
+  width: 100%;
+  max-width: 480px;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+#product-qr-reader video {
+  width: 100% !important;
+}
+
+.input-method-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin: 20px 0;
+  color: #4b5563;
+}
+
+.input-method-divider::before,
+.input-method-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background-color: #d1d5db;
+}
+
+.error-message {
+  margin: 0;
+  color: #dc2626;
+  text-align: left;
 }
