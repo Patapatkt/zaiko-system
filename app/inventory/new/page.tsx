@@ -4,6 +4,8 @@ import ProductCheckForm from "@/components/ProductCheckForm";
 import Link from "next/link";
 import { useActionState, useState } from "react";
 import ExistingProductRestockForm from "@/components/ExistingProductRestockForm";
+import { ScannedProduct } from "@/types/scanned-product";
+import ProductQrScanner from "@/components/ProductQrScanner";
 
 type CheckResult =
     Awaited<ReturnType<typeof checkProduct>>;
@@ -26,7 +28,7 @@ export default function NewProductPage() {
     const [name, setName] = useState("");
     const [specification, setSpecification] = useState("");
 
-    const [checkResult, setCheckResult,] =
+    const [checkResult, setCheckResult] =
         useState<CheckResult | null>(null);
     const [isChecking, setIsChecking] = useState(false);
     const [checkError, setCheckError] = useState("");
@@ -36,6 +38,15 @@ export default function NewProductPage() {
         setCheckResult(null);
         setCheckError("");
     }
+
+    // QR結果を入力欄へ反映する
+    function handleQrRead(product: ScannedProduct) {
+        setShelf(product.shelf);
+        setName(product.name);
+        setSpecification(product.specification);
+        resetCheckResult();
+    }
+
 
     // 棚番・商品名・仕様を確認する
     async function handleProductCheck() {
@@ -64,6 +75,7 @@ export default function NewProductPage() {
         } finally {
             setIsChecking(false);
         }
+
     }
 
     return (
@@ -71,6 +83,10 @@ export default function NewProductPage() {
             <h1 className="page-title">
                 商品入庫
             </h1>
+
+            <ProductQrScanner
+                onRead={handleQrRead}
+            />
 
             <ProductCheckForm
                 shelf={shelf}
@@ -122,7 +138,7 @@ export default function NewProductPage() {
                         restockState={restockState}
                     />
                 )}
-                    
+
                 {checkResult?.status ===
                     "notFound" && (
                         <>
