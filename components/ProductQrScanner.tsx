@@ -12,11 +12,30 @@ type ProductQrScannerProps = {
 
 const QR_READER_ID = "product-qr-reader";
 
+// カメラを停止してスキャナーを片付ける
+async function cleanupScanner(
+    scanner: Html5Qrcode
+) {
+    try {
+        await scanner.stop();
+    } catch {
+        // すでに停止している場合は何もしない
+    }
+    try {
+        scanner.clear();
+    } catch {
+        // すでに片付けられている場合は何もしない
+    }
+}
+
 export default function ProductQrScanner({
     onRead,
 }: ProductQrScannerProps) {
     const scannerRef =
         useRef<Html5Qrcode | null>(null);
+
+    const isProcessingScanRef =
+        useRef(false);
 
     const [isScanning, setIsScanning] =
         useState(false);
@@ -31,24 +50,25 @@ export default function ProductQrScanner({
             return;
         }
 
-        try {
-            await scanner.stop();
-            scanner.clear();
-        } catch {
-            // すでに停止している場合は何もしない
-        } finally {
-            scannerRef.current = null;
-            setIsScanning(false);
-        }
+        scannerRef.current = null;
+
+        await cleanupScanner(scanner);
+        setIsScanning(false);
     }
 
     // QRコードの読取成功後に商品情報へ変換する
     async function handleScanSuccess(
         decodedText: string
     ) {
-        await stopScanner();
+        if (isProcessingScanRef.current) { // 読取処理中に再度検出された場合は何もしない
+            return;
+        }
+
+        isProcessingScanRef.current = true;
 
         try {
+            await stopScanner();
+
             const product =
                 parseProductQr(decodedText);
 
@@ -59,6 +79,8 @@ export default function ProductQrScanner({
                     ? error.message
                     : "QRコードの読取に失敗しました。"
             );
+        } finally {
+            isProcessingScanRef.current = false;
         }
     }
 
@@ -69,7 +91,7 @@ export default function ProductQrScanner({
 
         try {
             const { Html5Qrcode } =
-                await import("html5-qrcode");//カメラ起動時にのみhtml5-qrcodeを読み込む
+                await import("html5-qrcode"); // カメラ起動時にのみhtml5-qrcodeを読み込む
 
             const scanner =
                 new Html5Qrcode(QR_READER_ID);
@@ -97,7 +119,13 @@ export default function ProductQrScanner({
                 }
             );
         } catch {
+            const scanner = scannerRef.current;
             scannerRef.current = null;
+            //起動失敗時、作成済みのスキャナー機能を片付ける 
+            if(scanner){
+                await cleanupScanner(scanner);
+            }
+            
             setIsScanning(false);
             setScanError(
                 "カメラを起動できませんでした。権限を確認してください。"
@@ -110,10 +138,10 @@ export default function ProductQrScanner({
         return () => {
             const scanner = scannerRef.current;
 
+            scannerRef.current = null;
+
             if (scanner) {
-                void scanner
-                    .stop()
-                    .catch(() => undefined);
+                void cleanupScanner(scanner);
             }
         };
     }, []);
