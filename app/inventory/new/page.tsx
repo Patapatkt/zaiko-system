@@ -6,6 +6,8 @@ import { useActionState, useState } from "react";
 import ExistingProductRestockForm from "@/components/ExistingProductRestockForm";
 import { ScannedProduct } from "@/types/scanned-product";
 import ProductQrScanner from "@/components/ProductQrScanner";
+import NewProductRegistrationForm
+    from "@/components/NewProductRegistrationForm";
 
 type CheckResult =
     Awaited<ReturnType<typeof checkProduct>>;
@@ -127,22 +129,18 @@ export default function NewProductPage() {
                 </button>
 
                 {checkError && (
-                    <p style={{ color: "red" }}>
+                    <p className="error-message">
                         {checkError}
                     </p>
                 )}
 
-                {checkResult?.status === "error" && (
-                    <p style={{ color: "red" }}>
-                        {checkResult.error}
-                    </p>
-                )}
-
-                {checkResult?.status === "deleted" && (
-                    <p style={{ color: "red" }}>
-                        {checkResult.error}
-                    </p>
-                )}
+                {checkResult &&
+                    (checkResult.status === "error" ||
+                        checkResult.status === "deleted") && (
+                        <p className="error-message">
+                            {checkResult.error}
+                        </p>
+                    )}
 
                 {checkResult?.status === "found" && (
                     <ExistingProductRestockForm
@@ -155,113 +153,12 @@ export default function NewProductPage() {
 
                 {checkResult?.status ===
                     "notFound" && (
-                        <>
-                            <p style={{ color: "blue" }}>
-                                一致する商品は未登録です。
-                                入力内容を確認し、新商品なら
-                                価格と初回入庫数量を入力してください。
-                            </p>
-
-                            <p>
-                                棚番：
-                                {
-                                    checkResult.inputValues
-                                        .shelf
-                                }
-                            </p>
-
-                            <p>
-                                商品名：
-                                {
-                                    checkResult.inputValues
-                                        .name
-                                }
-                            </p>
-
-                            <p>
-                                商品仕様：
-                                {
-                                    checkResult.inputValues
-                                        .specification
-                                }
-                            </p>
-
-                            {state?.error && (
-                                <p style={{ color: "red" }}>
-                                    {state.error}
-                                </p>
-                            )}
-
-                            <form
-                                action={formAction}
-                                className="form-action"
-                            >
-                                <input
-                                    type="hidden"
-                                    name="shelf"
-                                    value={
-                                        checkResult.inputValues
-                                            .shelf
-                                    }
-                                />
-
-                                <input
-                                    type="hidden"
-                                    name="name"
-                                    value={
-                                        checkResult.inputValues
-                                            .name
-                                    }
-                                />
-
-                                <input
-                                    type="hidden"
-                                    name="specification"
-                                    value={
-                                        checkResult.inputValues
-                                            .specification
-                                    }
-                                />
-
-                                <div className="form-group">
-                                    <label>価格</label>
-                                    <input
-                                        type="number"
-                                        name="price"
-                                        className="form-input"
-                                        min={0}
-                                        step={1}
-                                        required
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <label>
-                                        初回入庫数量
-                                    </label>
-                                    <input
-                                        type="number"
-                                        name="stock"
-                                        className="form-input"
-                                        min={1}
-                                        step={1}
-                                        required
-                                    />
-                                </div>
-
-                                <button
-                                    type="submit"
-                                    className={
-                                        "button-success"
-                                    }
-                                    disabled={isPending}
-                                >
-                                    {isPending
-                                        ? "入庫中..."
-                                        : "新商品を登録して入庫"}
-                                </button>
-                            </form>
-                        </>
+                        <NewProductRegistrationForm
+                            inputValues={checkResult.inputValues}
+                            error={state?.error}
+                            formAction={formAction}
+                            isPending={isPending}
+                        />
                     )}
 
                 <Link
