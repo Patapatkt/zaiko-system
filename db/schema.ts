@@ -1,4 +1,4 @@
-// dbのテールブ設定
+// dbのテーブル設定
 import {
   sqliteTable,
   integer,
@@ -6,9 +6,7 @@ import {
 } from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
 
-//
 // User
-//
 export const users = sqliteTable("users", {
   id: integer("id").primaryKey({ autoIncrement: true }),
 
@@ -23,11 +21,11 @@ export const users = sqliteTable("users", {
     .notNull(),
 
   // 管理者による利用承認
-    isApproved: integer("is_approved", {
-        mode: "boolean",
-    })
-        .notNull()
-        .default(false),
+  isApproved: integer("is_approved", {
+    mode: "boolean",
+  })
+    .notNull()
+    .default(false),
 
   createdAt: text("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
@@ -83,6 +81,10 @@ export const stockHistories = sqliteTable("stock_histories", {
     .references(() => products.id)
     .notNull(),
 
+  // 操作したユーザー
+  userId: integer("user_id")
+    .references(() => users.id),
+
   quantity: integer("quantity").notNull(),
 
   type: text("type").notNull(),
@@ -95,7 +97,7 @@ export const stockHistories = sqliteTable("stock_histories", {
 });
 
 export const productCodeSequence = sqliteTable(
-  "product_code_sequence", 
+  "product_code_sequence",
   {
     id: integer("id").primaryKey(),//採番テーブル自身の行を識別するID
     currentNumber: integer("current_number").notNull(),//商品コードを作るためのカウンター

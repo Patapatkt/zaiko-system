@@ -1,4 +1,8 @@
+"use client"
+
+import { restockProduct } from "@/actions/inventory";
 import { checkProduct } from "@/actions/inventory";
+import { useActionState } from "react";
 
 type CheckResult =
     Awaited<ReturnType<typeof checkProduct>>;
@@ -10,25 +14,24 @@ type FoundResult = Extract<
 
 type Product = FoundResult["product"];//FoundResult の中にある product の型を取り出してください
 
-
 type ExistingProductRestockFormProps = {
     // 親から受け取るものを書く
     product: Product;
-    isRestocking: boolean;
-    restockAction: (formData: FormData) => void;
-    restockState: {
-        error?: string;
-        success?: boolean;
-    } | null;
 };
 
 export default function ExistingProductRestockForm({
     // 受け取る
     product,//どの商品？
-    isRestocking,//今、入庫処理中か？
-    restockAction,//入庫ボタンが押された時に実際に処理する担当
-    restockState,//入庫処理の結果・エラー情報
 }: ExistingProductRestockFormProps) {
+    const [
+        restockState,
+        restockAction,
+        isRestocking,
+    ] = useActionState(
+        restockProduct,
+        null
+    );  
+
     return (
         <div className="existing-product-restock">
             <p style={{ color: "green" }}>

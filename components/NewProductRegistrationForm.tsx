@@ -90,7 +90,7 @@ export default function NewProductRegistrationForm({
                 <button
                     type="submit"
                     className={
-                        "button-success"
+                        "button button-success"
                     }
                     disabled={isPending}
                 >

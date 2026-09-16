@@ -40,10 +40,10 @@ export default async function Home() {
           </Link>
           
           <Link
-            href="/inventory/new"
+            href="/stock-operation"
             className="bg-blue-500 hover:bg-blue-600 text-2xl text-center font-bold px-4 py-6 rounded"
           >
-            商品入庫
+            入出庫操作
           </Link>
 
           {user.role === "admin" && (

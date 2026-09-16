@@ -4,7 +4,7 @@ import { db } from "@/db";
 import { products, stockHistories, productCodeSequence } from "@/db/schema";
 import { and, eq, isNull, sql } from "drizzle-orm"
 import { redirect } from "next/navigation";
-import { requireAdmin,requireApprovedUser } from "@/utils/auth";
+import { requireAdmin, requireApprovedUser } from "@/utils/auth";
 
 type ProductState = {
     error: string;
@@ -138,7 +138,8 @@ export async function restockProduct(
     previousState: ProductState,
     formData: FormData
 ): Promise<ProductState> {
-    await requireApprovedUser();//承認済ユーザーか確認
+    const user =
+        await requireApprovedUser();//承認済ユーザーか確認
 
     const productId = Number(formData.get("productId"));
     const quantity = Number(formData.get("quantity"));
@@ -185,6 +186,7 @@ export async function restockProduct(
         // 入出庫履歴へ入庫記録を追加
         await tx.insert(stockHistories).values({
             productId,
+            userId: user.id,
             quantity,
             type: "IN",
             memo: "商品補充",
@@ -198,7 +200,8 @@ export async function createProduct(
     previousState: ProductState,
     formData: FormData
 ): Promise<ProductState> {
-    await requireApprovedUser();
+    const user =
+        await requireApprovedUser();
 
     const shelf =
         (formData.get("shelf") as string)?.trim().toUpperCase();
@@ -247,15 +250,15 @@ export async function createProduct(
         };
     }
 
-     // 同じ棚番・商品名・仕様の商品がないか再確認
-    const existingProduct = 
+    // 同じ棚番・商品名・仕様の商品がないか再確認
+    const existingProduct =
         await db.query.products.findFirst({
             where: and(
                 eq(products.shelf, shelf),
                 eq(products.name, name),
                 eq(products.specification, specification)
             )
-        });            
+        });
 
     if (existingProduct) {
         return {
@@ -308,6 +311,7 @@ export async function createProduct(
         // 新商品登録を初回入庫として履歴へ保存
         await tx.insert(stockHistories).values({
             productId: product.id,
+            userId: user.id,
             quantity: stock,
             type: "IN",
             memo: "商品登録時の初回在庫",
@@ -323,7 +327,8 @@ export async function updateProduct(
     previousState: ProductState,
     formData: FormData
 ) {
-    await requireAdmin();
+    const user =
+        await requireAdmin();
     const shelf =
         (formData.get("shelf") as string)?.trim().toUpperCase();
     const name = formData.get("name") as string;
@@ -372,7 +377,8 @@ export async function updateStock(
     id: number,//引数:idは一意の為、商品名を確実に絞り込める
     formData: FormData//引数:formDataを型として引数に設定
 ) {
-    await requireAdmin();
+    const user =
+        await requireAdmin();
     const memo = formData.get("memo") as string;//formDataよりname(商品名)を取得
     const quantity = Number(formData.get("quantity")) as number;//formDataよりquantity(増減値)を取得
 
@@ -416,6 +422,7 @@ export async function updateStock(
 
         await tx.insert(stockHistories).values({
             productId: id,
+            userId: user.id,
             quantity,
             type,
             memo,
@@ -428,7 +435,8 @@ export async function adjustStock(
     id: number,
     formatData: FormData
 ) {
-    await requireAdmin();
+    const user =
+        await requireAdmin();
     const actualStock = Number(formatData.get("actualStock"));
     const memo = formatData.get("memo") as string;
 
@@ -474,6 +482,7 @@ export async function adjustStock(
             .insert(stockHistories)
             .values({
                 productId: id,
+                userId: user.id,
                 quantity: difference,
                 type,
                 memo: `変更前:${product.stock}/変更後:${actualStock}/理由:${memo}`

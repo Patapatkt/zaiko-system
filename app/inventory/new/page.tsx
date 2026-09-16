@@ -1,10 +1,10 @@
 "use client"
-import { checkProduct, createProduct, restockProduct } from "@/actions/inventory";
+import { checkProduct, createProduct} from "@/actions/inventory";
 import ProductCheckForm from "@/components/ProductCheckForm";
 import Link from "next/link";
 import { useActionState, useState } from "react";
 import ExistingProductRestockForm from "@/components/ExistingProductRestockForm";
-import { ScannedProduct } from "@/types/scanned-product";
+import type { ScannedProduct } from "@/types/scanned-product";
 import ProductQrScanner from "@/components/ProductQrScanner";
 import NewProductRegistrationForm
     from "@/components/NewProductRegistrationForm";
@@ -15,14 +15,6 @@ type CheckResult =
 export default function NewProductPage() {
     const [state, formAction, isPending] = useActionState(
         createProduct,
-        null
-    );
-    const [
-        restockState,
-        restockAction,
-        isRestocking,
-    ] = useActionState(
-        restockProduct,
         null
     );
 
@@ -145,9 +137,6 @@ export default function NewProductPage() {
                 {checkResult?.status === "found" && (
                     <ExistingProductRestockForm
                         product={checkResult.product}
-                        isRestocking={isRestocking}
-                        restockAction={restockAction}
-                        restockState={restockState}
                     />
                 )}
 
@@ -162,12 +151,12 @@ export default function NewProductPage() {
                     )}
 
                 <Link
-                    href="/dashboard"
+                    href="/stock-operation"
                     className={
                         "button button-secondary"
                     }
                 >
-                    メニュー
+                    入出庫操作メニュー
                 </Link>
             </div>
         </main>
