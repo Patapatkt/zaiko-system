@@ -45,3 +45,14 @@ export async function requireApprovedUser() {
     }
     return user;
 }
+
+// ピッキング担当者か確認する
+export async function requirePicker() {
+    const user =await requireApprovedUser();
+
+    if(!user.isPicker){
+        redirect("/dashboard");
+    }
+
+    return user;
+}

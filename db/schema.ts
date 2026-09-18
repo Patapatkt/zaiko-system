@@ -5,6 +5,7 @@ import {
   text,
 } from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
+import { boolean } from "drizzle-orm/gel-core";
 
 // User
 export const users = sqliteTable("users", {
@@ -22,6 +23,13 @@ export const users = sqliteTable("users", {
 
   // 管理者による利用承認
   isApproved: integer("is_approved", {
+    mode: "boolean",
+  })
+    .notNull()
+    .default(false),
+    
+  // 入出庫可能なユーザー
+  isPicker: integer("is_picker", {
     mode: "boolean",
   })
     .notNull()

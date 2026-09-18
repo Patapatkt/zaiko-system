@@ -78,6 +78,11 @@ export default async function InventoryPage(
                 )
             );
 
+    const exportParams = new URLSearchParams({
+        name: trimmedName,
+        shelf: trimmedShelf,
+        specification: trimmedSpecification,
+    })
 
     return (
 
@@ -96,6 +101,17 @@ export default async function InventoryPage(
                 shelf={trimmedShelf}
                 specification={trimmedSpecification}
             />
+
+            {!isSearchEmpty && productList.length > 0 && (
+                <div className="header-actions">
+                    <Link
+                        href={`/inventory/export?${exportParams.toString()}`}
+                        className="button button-secondary"
+                    >
+                        検索結果をCSV出力
+                    </Link>
+                </div>
+            )}
 
             <div className="table-wrapper">
                 <table className="common-table">
