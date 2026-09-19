@@ -711,7 +711,7 @@ body {
   width: 100%;
 }
 
-.qr-form-help{
+.qr-form-help {
   text-align: center;
   width: 100%;
   margin: 12px 0 0;
@@ -774,4 +774,82 @@ body {
 .stock-operation-actions .button:focus-visible {
   outline: 3px solid #1d4ed8;
   outline-offset: 3px;
+}
+
+/* 在庫メンテナンス */
+.stock-operation-section,
+.stock-adjustment-section {
+  margin-top: 24px;
+  padding: 20px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  background-color: #ffffff;
+}
+
+.section-title {
+  margin: 0 0 8px;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.stock-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.stock-form label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+.stock-form input,
+.stock-form select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #9ca3af;
+  border-radius: 6px;
+  background-color: #ffffff;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.stock-action-buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.button-danger {
+  color: #ffffff;
+  background-color: #dc2626;
+}
+
+.button-danger:hover {
+  background-color: #b91c1c;
+}
+
+.form-help {
+  margin: 0;
+  color: #4b5563;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 600px) {
+
+  .stock-operation-section,
+  .stock-adjustment-section {
+    padding: 16px;
+  }
+
+  .stock-action-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .stock-action-buttons .button {
+    width: 100%;
+  }
 }
