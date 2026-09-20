@@ -391,7 +391,7 @@ export async function updateStock(
         throw new Error("入出庫数は数値を入力してください");
     }
 
-    if (Number.isInteger(quantity)) {
+    if (!Number.isInteger(quantity)) {
         throw new Error("入出庫数は整数を入力してください")
     }
 

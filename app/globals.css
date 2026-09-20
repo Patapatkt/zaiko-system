@@ -9,15 +9,6 @@
   --foreground: #171717;
 }
 
-/*
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-*/
-
 body {
   background: var(--background);
   color: var(--foreground);
@@ -805,6 +796,10 @@ body {
   font-weight: 700;
 }
 
+.stock-reason-field {
+    margin-top: 12px;
+}
+
 .stock-form input,
 .stock-form select {
   width: 100%;
@@ -822,9 +817,15 @@ body {
   flex-wrap: wrap;
 }
 
+.stock-menu-actions {
+    display: inline-flex;
+    margin:24px 0 0 24px;
+}
+
 .button-danger {
   color: #ffffff;
   background-color: #dc2626;
+  margin-right: 12px;
 }
 
 .button-danger:hover {
@@ -852,4 +853,18 @@ body {
   .stock-action-buttons .button {
     width: 100%;
   }
+
+  .stock-menu-actions {
+        display: flex;
+        width: 100%;
+        margin: 24px 0 0;
+    }
+
+    .stock-menu-actions .button {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
 }
