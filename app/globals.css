@@ -797,7 +797,7 @@ body {
 }
 
 .stock-reason-field {
-    margin-top: 12px;
+  margin-top: 12px;
 }
 
 .stock-form input,
@@ -818,8 +818,8 @@ body {
 }
 
 .stock-menu-actions {
-    display: inline-flex;
-    margin:24px 0 0 24px;
+  display: inline-flex;
+  margin: 24px 0 0 24px;
 }
 
 .button-danger {
@@ -855,16 +855,26 @@ body {
   }
 
   .stock-menu-actions {
-        display: flex;
-        width: 100%;
-        margin: 24px 0 0;
-    }
+    display: flex;
+    width: 100%;
+    margin: 24px 0 0;
+  }
 
-    .stock-menu-actions .button {
-        display: flex;
-        justify-content: center;
-        width: 100%;
-        box-sizing: border-box;
-    }
+  .stock-menu-actions .button {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* 履歴画面のメニューボタン */
+
+  .history-menu-link {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    margin-top: 24px;
+    text-align: center;
+  }
 
 }
