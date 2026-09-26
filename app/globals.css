@@ -867,9 +867,9 @@ body {
     box-sizing: border-box;
   }
 
-  /* 履歴画面のメニューボタン */
+  /* スマホ画面のメニューボタン */
 
-  .history-menu-link {
+  .mobile-menu-link {
     display: block;
     box-sizing: border-box;
     width: 100%;

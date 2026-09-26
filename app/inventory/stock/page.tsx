@@ -132,7 +132,7 @@ export default async function StockPage({
             </div>
             <Link
                 href="/dashboard"
-                className="button button-secondary"
+                className="button button-secondary mobile-menu-link"
             >
                 メニュー
             </Link>

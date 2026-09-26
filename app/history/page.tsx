@@ -246,7 +246,7 @@ export default async function HistoryPage({
                 </table>
                 <Link
                     href="/dashboard"
-                    className="button button-secondary history-menu-link"
+                    className="button button-secondary mobile-menu-link"
                 >
                     メニュー
                 </Link>
