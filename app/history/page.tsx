@@ -201,15 +201,15 @@ export default async function HistoryPage({
                                     <td>
                                         {history.createdAt
                                             ? new Date(history.createdAt).toLocaleString("ja-JP", {
-                                                    timeZone: "Asia/Tokyo",
-                                                    year: "numeric",
-                                                    month: "2-digit",
-                                                    day: "2-digit",
-                                                    hour: "2-digit",
-                                                    minute: "2-digit",
-                                                    second: "2-digit",
-                                                    hour12: false,
-                                                })
+                                                timeZone: "Asia/Tokyo",
+                                                year: "numeric",
+                                                month: "2-digit",
+                                                day: "2-digit",
+                                                hour: "2-digit",
+                                                minute: "2-digit",
+                                                second: "2-digit",
+                                                hour12: false,
+                                            })
                                             : "未設定"}
                                     </td>
                                     <td>
@@ -246,7 +246,7 @@ export default async function HistoryPage({
                 </table>
                 <Link
                     href="/dashboard"
-                    className="button button-secondary"
+                    className="button button-secondary history-menu-link"
                 >
                     メニュー
                 </Link>
