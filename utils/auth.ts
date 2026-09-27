@@ -25,16 +25,16 @@ export async function requireAdmin() {
     return user;
 }
 
-// 承認済みユーザーか確認する
+// 承認済みユーザーを取得する
 export async function requireApprovedUser() {
-    const session = await getSession();
+    const session = await getSession();// 有効かつ承認済みのユーザーのIDを取得
 
     // ログインしていなければログイン画面へ
     if (!session) {
         redirect("/login");
     }
 
-    // ログイン中のユーザーを取得
+    // 現在のユーザー情報をDBから取得
     const user = await db.query.users.findFirst({
         where: eq(users.id, session.userId),
     });
@@ -46,10 +46,10 @@ export async function requireApprovedUser() {
     return user;
 }
 
-// ピッキング担当者か確認する
+// 承認済みユーザーを取得
 export async function requirePicker() {
     const user =await requireApprovedUser();
-
+    // ピッキング担当者でなければメニュー画面へ
     if(!user.isPicker){
         redirect("/dashboard");
     }
