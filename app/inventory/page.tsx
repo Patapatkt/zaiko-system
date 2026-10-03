@@ -2,7 +2,7 @@
 import { db } from "@/db";
 import { products, users } from "@/db/schema";
 import Link from "next/link";
-import { and, eq, like } from "drizzle-orm";
+import { and, eq, isNull, like } from "drizzle-orm";
 import { getSession } from "@/actions/auth"
 import { redirect } from 'next/navigation';
 import SearchForm from "@/components/SearchForm";
@@ -53,7 +53,7 @@ export default async function InventoryPage(
         trimmedShelf === "" &&
         trimmedSpecification === "";
 
-    //検索文字が全て空ならDB検索を行わず、空の配列にする
+    //検索文字が全て空＆削除済商品なら除外し空の配列にする
     const productList = isSearchEmpty
         ? []
         : await db
@@ -75,8 +75,11 @@ export default async function InventoryPage(
                     trimmedSpecification
                         ? like(products.specification, `%${trimmedSpecification}%`)
                         : undefined,
+                    isNull(products.deletedAt)
                 )
-            );
+            )
+            .orderBy(products.code);
+
 
     const exportParams = new URLSearchParams({
         name: trimmedName,

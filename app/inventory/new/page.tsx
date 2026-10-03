@@ -1,5 +1,7 @@
 "use client"
-import { checkProduct, createProduct} from "@/actions/inventory";
+// 商品入庫画面
+import { createProduct} from "@/actions/receive";
+import { checkProduct } from "@/actions/check";
 import ProductCheckForm from "@/components/ProductCheckForm";
 import Link from "next/link";
 import { useActionState, useState } from "react";

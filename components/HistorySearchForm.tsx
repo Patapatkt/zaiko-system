@@ -123,6 +123,7 @@ export default function HistorySearchForm({
                     <option value="IN">入庫</option>
                     <option value="OUT">出庫</option>
                     <option value="CHECK">棚卸</option>
+                    <option value="DELETE">廃却</option>
                 </select>
                 <p className="form-help">区分を選択してください</p>
             </div>

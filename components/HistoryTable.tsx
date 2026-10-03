@@ -74,7 +74,10 @@ export default function HistoryTable({
                     ? "出庫"
                     : history.type === "CHECK"
                       ? "棚卸"
-                      : "要確認"}
+                      : history.type === "DELETE"
+                        ? "廃却"
+                        : "要確認"}
+                    
               </td>
               <td>{history.quantity}</td>
               <td>{history.memo ?? "なし"}</td>

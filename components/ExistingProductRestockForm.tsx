@@ -1,7 +1,7 @@
 "use client"
-
-import { restockProduct } from "@/actions/inventory";
-import { checkProduct } from "@/actions/inventory";
+// 入庫画面（登録済商品）
+import { restockProduct } from "@/actions/receive";
+import { checkProduct } from "@/actions/check";
 import { useActionState } from "react";
 
 type CheckResult =

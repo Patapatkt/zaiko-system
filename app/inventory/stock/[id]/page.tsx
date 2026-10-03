@@ -3,7 +3,7 @@ import { requireAdmin } from "@/utils/auth";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { products } from "@/db/schema";
-import { updateStock, adjustStock } from "@/actions/inventory";
+import { updateStock, adjustStock } from "@/actions/stock";
 import Link from "next/link";
 import StockAdjustment from "@/components/StockAdjustment";
 import StockOperation from "@/components/StockOperation";
