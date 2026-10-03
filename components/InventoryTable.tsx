@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import type { products } from "@/db/schema";
-import { deleteProduct } from "@/actions/inventory";
+import { deleteProduct } from "@/actions/manage";
 
 // 表の表示に必要な商品情報の型
 type InventoryProduct = Pick<
@@ -86,6 +86,7 @@ export default function InventoryTable({
                                                 >
                                                     削除
                                                 </button>
+
                                             </form>
                                         )}
                                     </div>

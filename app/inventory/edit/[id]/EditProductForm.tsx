@@ -1,6 +1,6 @@
 "use client";
 
-import { updateProduct } from "@/actions/inventory";
+import { updateProduct } from "@/actions/manage";
 import Link from "next/link";
 import { useActionState } from "react";
 import ProductFormFields from "@/components/ProductFormFields";
