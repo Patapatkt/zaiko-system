@@ -60,19 +60,27 @@ export async function deleteProduct(id: number) {
             throw new Error("商品が存在しないか、既に削除されています。");
         }
 
-        // 未削除かを再確認して更新し、重複した廃却記録を防ぐ
-        await tx
+        // 未削除かつ、取得時から在庫が変わっていない商品だけ更新する
+        const [deletedProduct] = await tx 
             .update(products)
             .set({
-                // isActive: false,⇐将来、論理削除を採用する場合はこの行を有効にする26/8/23
                 stock: 0,
                 deletedAt: new Date().toISOString(),
             })
-            .where(and(eq(products.id, id), isNull(products.deletedAt)))
+            .where( //どの商品を更新してよいか条件指定
+                and(
+                    eq(products.id, id),//対象のidが一致すること
+                    isNull(products.deletedAt),//deletedAtがnullであること(未廃却であること)
+                    eq(products.stock, product.stock),//更新する瞬間の数量が取得時の在庫と一致すること
+                )
+            )
             .returning({ id: products.id });
-            if (!product) {
-                throw new Error("商品は既に削除されています");
-            }
+
+        if (!deletedProduct) {
+            throw new Error(
+                "商品が廃却されたか、在庫が変更されています。再確認してください。"
+            );
+        }
         // 廃却した数量をマイナスで記録
         await tx
             .insert(stockHistories)
