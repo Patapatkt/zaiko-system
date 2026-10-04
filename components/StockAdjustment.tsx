@@ -1,14 +1,24 @@
-// 棚卸フォームのコンポーネント
+"use client";
 
+import { useActionState } from "react";//useActionStateをインポート
+import type { StockAdjustmentState } from "@/actions/stock";//StockAdjustmentStateをインポート
+
+// 棚卸フォームのコンポーネント
 type StockAdjustmentProps = {
     action: (
+        previousState: StockAdjustmentState,//前の状態を引数として受け取り、Promiseを返す関数
         formData: FormData
-    ) => void | Promise<void>;
+    ) => Promise<StockAdjustmentState>;//Promiseを返す関数の型を定義
 };
 
 export default function StockAdjustment({
     action,
-}: StockAdjustmentProps) {
+}: StockAdjustmentProps) {//StockAdjustmentProps型のactionを受け取る
+    // useActionStateフックを使用して、アクションの状態、フォームのアクション、および保留中の状態を取得
+    const [state, formAction, isPending] = useActionState(
+        action,
+        null
+    );
     return (
         <section className="stock-adjustment-section">
             <h2 className="section-title">
@@ -20,9 +30,14 @@ export default function StockAdjustment({
             </p>
 
             <form
-                action={action}
+                action={formAction}
                 className="stock-form"
             >
+                {state?.error && (
+                    <p className="error-message" role="alert">
+                        {state.error}
+                    </p>
+                )}
                 <div>
                     <label htmlFor="actualStock">
                         実在庫数
@@ -78,8 +93,9 @@ export default function StockAdjustment({
                     <button
                         type="submit"
                         className="button button-primary"
+                        disabled={isPending}
                     >
-                        棚卸を反映
+                        {isPending ? "処理中..." : "棚卸を反映"}
                     </button>
                 </div>
             </form>

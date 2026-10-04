@@ -1,14 +1,24 @@
-// 棚卸フォームのコンポーネント
+"use client";
 
-type StockOperationProps = {
+import { useActionState } from "react";
+import type { updateStockState } from "@/actions/stock";
+
+// 入出庫調整フォームのコンポーネント
+type updateStockProps = {
     action: (
+        previousState: updateStockState,//前の状態を引数として受け取り、Promiseを返す関数
         formData: FormData
-    ) => void | Promise<void>;
+    ) => Promise<updateStockState>;//Promiseを返す関数の型を定義
 };
 
 export default function StockOperation({
     action,
-}: StockOperationProps) {
+}: updateStockProps) {//updateStockProps型のactionを受け取る
+    // useActionStateフックを使用して、アクションの状態、フォームのアクション、および保留中の状態を取得
+    const [state, formAction, isPending] = useActionState(
+        action,
+        null
+    );
     return (
         <section className="stock-operation-section">
             <h2 className="section-title">
@@ -16,11 +26,18 @@ export default function StockOperation({
             </h2>
 
             <form
-                action={action}
+                action={formAction}
                 className="stock-form"
             >
+                {state?.error && (
+                    <p className="error-message" role="alert">
+                        {state.error}
+                    </p>
+                )}
                 <div>
-                    <label>調整数量</label>
+                    <label htmlFor="quantity">
+                        調整数量
+                    </label>
                     <input
                         id="quantity"
                         name="quantity"
@@ -84,8 +101,9 @@ export default function StockOperation({
                         name="operation"
                         value="IN"
                         className="button button-success"
+                        disabled={isPending}
                     >
-                        入庫
+                        {isPending ? "処理中..." : "入庫"}
                     </button>
 
                     <button
@@ -93,8 +111,9 @@ export default function StockOperation({
                         name="operation"
                         value="OUT"
                         className="button button-danger"
+                        disabled={isPending}
                     >
-                        出庫
+                        {isPending ? "処理中..." : "出庫"}
                     </button>
                 </div>
             </form>
