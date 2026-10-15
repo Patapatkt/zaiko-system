@@ -44,3 +44,5 @@ next-env.d.ts
 sqlite.db
 sqlite.db-shm
 sqlite.db-wal
+*storybook.log
+storybook-static
